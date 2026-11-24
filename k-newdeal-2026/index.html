@@ -1,0 +1,68 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>2026 K-뉴딜 아카데미 참여기업 현황</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;800&display=swap">
+<style>
+/* VOICE 업무용 현황표 · IDEA 정부 제출자료 표 · PICTURE 표 자체 · COLOUR 네이비+블루+경고 레드 · TYPE Noto Sans KR */
+:root{color-scheme:light dark;--bg:light-dark(#f4f6fa,#11161f);--card:light-dark(#fff,#1a2130);--ink:light-dark(#1b2333,#e6ebf3);--mute:light-dark(#5b6577,#9aa6ba);--line:light-dark(#edf0f5,#273044);--hover:light-dark(#f6f9fd,#202a3c);--hl:light-dark(#fff8e6,#3a3220);--foot:light-dark(#f1f4f9,#202838);--head:#0b3a66}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;font-family:"Noto Sans KR",-apple-system,"Malgun Gothic",sans-serif;background:var(--bg);color:var(--ink);overflow-x:clip}
+.wrap{max-width:1180px;margin:0 auto;padding:32px 20px 48px}
+h1{font-size:26px;margin:0 0 6px}.sub{color:var(--mute);font-size:14px;margin:0 0 22px;line-height:1.6}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:20px}
+.card{background:var(--card);border-radius:12px;padding:16px 18px;box-shadow:0 1px 3px rgba(20,40,80,.08)}
+.card .l{font-size:13px;color:var(--mute)}.card .v{font-size:26px;font-weight:800;margin-top:6px;color:light-dark(#0b3a66,#7fb6ea)}.card .s{font-size:13px;color:var(--mute);margin-top:4px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+.bar input{flex:1;min-width:220px;padding:10px 14px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;font-size:16px;font-family:inherit;min-height:44px}
+.bar label{font-size:14px;color:var(--ink);display:flex;gap:6px;align-items:center}
+.tbl{background:var(--card);border-radius:12px;box-shadow:0 1px 3px rgba(20,40,80,.08);overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--head);color:#fff;font-weight:600;cursor:pointer;white-space:nowrap;position:sticky;top:0;user-select:none}
+th.num,td.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+th .arr{opacity:.6;font-size:11px;margin-left:4px}
+tr:hover td{background:var(--hover)}
+td.co{font-weight:600;white-space:nowrap}
+.rate{display:flex;align-items:center;gap:8px;justify-content:flex-end}
+.rate .track{width:70px;height:6px;background:var(--line);border-radius:3px;overflow:hidden}.rate .fill{height:100%;background:#0071bb}
+.low .fill{background:#e8452c}.na{color:#9aa3b2}
+tr.hl td{background:var(--hl)}
+tfoot td{font-weight:700;background:var(--foot)}
+td.cs{font-size:13px;color:var(--mute);min-width:180px}
+.note{font-size:13px;color:var(--mute);margin-top:14px;line-height:1.7}
+</style></head><body><div class="wrap">
+<h1>2026 K-뉴딜 아카데미 참여기업 현황</h1>
+<p class="sub">50개사 · 72개 아카데미 · 2026년 9월 15일 기준 계획 · 모집 · 훈련 인원<br>출처: 고용노동부 제출자료(국회 박수민 의원실), 연합뉴스 2026.10.13 보도</p>
+<div class="cards" id="cards"></div>
+<div class="bar"><input id="q" placeholder="기업명 · 아카데미명 · 교육 파트너 검색"><label><input type="checkbox" id="under"> 계획 대비 모집 미달 기업만</label><label><input type="checkbox" id="mark" checked> 관심 기업 강조 (GS · 하나은행 · 유통)</label></div>
+<div class="tbl"><table><thead><tr>
+<th data-k="0" class="num">#</th><th data-k="1">기업명</th><th data-k="2">아카데미명</th><th data-k="3" class="num">계획</th><th data-k="4" class="num">모집</th><th data-k="5" class="num">훈련</th><th data-k="6" class="num">훈련/계획</th><th data-k="7">교육 파트너 · 공동 참여</th>
+</tr></thead><tbody id="tb"></tbody><tfoot><tr id="tf"></tr></tfoot></table></div>
+<p class="note">· "-"는 원자료 표기로, 9월 15일 기준 모집 또는 훈련이 시작되지 않았거나 집계되지 않은 경우입니다.<br>· 계획 인원대로 모집하지 못한 기업은 23곳이며, 2026년 훈련 목표 1만 명 대비 훈련 인원은 4,249명입니다.<br>· 교육 파트너 · 공동 참여는 보도자료 · 모집 공고에서 확인된 경우만 적었습니다(2026.11.24 검색 기준). 빈칸은 미확인이며, 기업 자체 운영일 수도 있습니다.<br>· 열 제목을 누르면 정렬됩니다.</p>
+</div><script>
+const D=[[1, "SK텔레콤", "SKT ALEPH", 173, 173, 171], [2, "SK AX", "SKALA (SK AI Leader Academy)", 260, 260, 246], [3, "SK하이닉스", "Hy-Po (K-뉴딜 반도체 아카데미)", 300, null, null], [4, "SK플래닛", "부산 스마트항만·해양물류 데이터 실무 과정 등 2개", 50, 50, 41], [5, "HD현대중공업", "HD현대 Future Builder Academy – Ocean Transformation 과정 등 2개", 240, 150, 94], [6, "현대건설", "HILLSTATE Academy", 60, 30, 30], [7, "HD건설기계", "Hi-CEED", 50, 50, 43], [8, "HD현대삼호", "HD현대 선박건조 필드테크니션", 60, 30, 22], [9, "현대자동차", "HINT (HMG Incubation of New Talent)", 1000, 500, 497], [10, "삼성전자", "삼성그룹 청년희망배움터", 1000, 665, 428], [11, "포스코 인재창조원", "온디바이스 AI기반 산업용 소프트웨어 개발 등 5개", 180, 180, 151], [12, "롯데지주", "롯데 LIFT (청년 직무 온보딩 아카데미)", 270, 180, 169], [13, "한화오션 엔지니어링", "Ocean QM DX Academy", 60, 60, 48], [14, "한화오션", "스마트 생산관리 DX 아카데미", 60, 60, 60], [15, "한화시스템", "K-방산을 넘어, 세계로의 확장 등 2개", 200, 100, 97], [16, "한화", "Hanwha Spark Camp 등 2개", 100, 100, 82], [17, "한화엔진", "한화엔진 정밀제조 DX Academy", 50, 50, 48], [18, "LG전자", "Let's Grow with LG전자(디지털 마케팅 Track) 등 3개", 420, 230, 192], [19, "LG화학", "Let's Grow with LG화학(여수) 등 2개", 200, 150, 140], [20, "LG디스플레이", "Let's Grow with LG디스플레이", 100, 100, 91], [21, "GS", "52g ReBoot Camp", 120, 120, 83], [22, "KT", "KT ICT AX 아카데미", 200, 200, 100], [23, "CJ ENM", "K-콘텐츠 스토리텔러 육성", 70, 40, 40], [24, "LS", "LS JUMP-UP 부트 캠프", 35, 35, 31], [25, "셀트리온", "Bio-Boot Camp CELLOW", 50, 50, 49], [26, "LS ELECTRIC", "LEAP Academy", 25, 25, 25], [27, "두산로보틱스", "협동로봇 기반 로컬비즈니스 사업개발 실전과정", 70, null, null], [28, "CJ올리브네트웍스", "L.L.M Academy", 120, null, null], [29, "신세계아이앤씨", "Future & Dream Academy", 400, 400, 388], [30, "현대홈쇼핑", "라이브커머스 전문가과정 등 2개", 200, 100, 81], [31, "한국전력거래소", "전력시장 디지털 인재 아카데미 등 3개", 150, null, null], [32, "정림건축 종합건축사사무소", "ARiC (Archi Rise Camp)", 80, 40, 40], [33, "아난티", "아난티 호스피탈리티 서비스경험 디자인 아카데미", 50, 50, 26], [34, "웅진씽크빅", "웅진 TEXT-HIP CLUB: AI와 함께 쓰는 나의 첫 번째 독립출판", 50, 50, 50], [35, "매일유업", "More than Food Academy", 50, 25, 24], [36, "화천기공", "CNC 공작기계 설계 및 스마트 제조 핵심인재 양성 과정", 50, 50, 9], [37, "인텔", "인텔 AI for X 실무 프로젝트 과정", 60, 60, 47], [38, "한국어도비시스템즈", "AI Growth Marketer 양성과정 등 2개", 300, 90, 54], [39, "한국마이크로소프트", "취·창업을 위한 AI 실전 프로젝트 과정", 200, 40, 19], [40, "한국오라클", "Oracle AI Startup Bootcamp", 180, null, null], [41, "NC AI", "Unity 바이브 코딩 기반 AI 게임 직무 개발 과정", 150, 90, 87], [42, "하이브", "HI HIGH", 28, 28, 28], [43, "SM유니버스", "K-POP 댄스 지도자 양성 과정 등 2개", 255, 85, 57], [44, "우리금융지주", "우리WON청년IT아카데미", 60, 60, 60], [45, "하나은행", "하나 K-뉴딜 금융 아카데미", 30, 30, 20], [46, "KB국민은행", "KB-Bridge", 120, 120, 104], [47, "신한금융지주", "AI 에이전트 기반 금융 서비스 개발 과정", 40, 40, 22], [48, "MBN", "MBN K-미디어 부트캠프", 60, 60, 60], [49, "한경닷컴", "[한경×이랜드] K-Tour LX 콘텐츠 마케팅", 60, 33, 31], [50, "머니투데이", "뉴스미디어 데이터 기반 AI 퍼포먼스 마케팅 과정", 90, 90, 64]];
+const HL=["GS","하나은행","신세계아이앤씨","롯데지주","현대홈쇼핑"];
+const CS={"하나은행": "알파코 (교육 운영기관: 교육장 · LMS · 프로젝트 · 훈련생 지원)", "SK텔레콤": "코리아IT아카데미 (공동 운영)", "SK AX": "울산과학대학교 (울산캠퍼스 교육공간 · 운영 지원), 울산시 협약", "HD건설기계": "영남이공대학교 · 경북대학교 (교육 운영기관)", "현대홈쇼핑": "하이테커 (교육 운영 · 모집)", "한화오션": "멀티캠퍼스 (교육 운영 · 모집)", "한화시스템": "호서대학교 KTX캠퍼스 (AI 에이전트 과정 교육장)", "머니투데이": "에이블런 (교육 운영)", "아난티": "부산디자인진흥원 (CX 디자인 협력)", "SM유니버스": "스튜디오 리얼라이브 (SM 계열, 이머시브 과정 공동 운영)", "우리금융지주": "우리은행 · 우리투자증권 · 동양생명 · ABL생명 · 우리카드 · 우리에프아이에스 · 우리금융미래재단 (8개 그룹사 공동)", "신세계아이앤씨": "이마트 · 조선호텔앤리조트 · 신세계푸드 (그룹 4개 계열사 공동)", "LG전자": "LG화학 · LG디스플레이와 'Let's Grow with LG' 그룹 공동 브랜드", "LG화학": "LG전자 · LG디스플레이와 'Let's Grow with LG' 그룹 공동 브랜드", "LG디스플레이": "LG전자 · LG화학과 'Let's Grow with LG' 그룹 공동 브랜드", "KB국민은행": "부산대 · 광주대 · 단국대(천안) (권역별 교육장)", "셀트리온": "서울대(VR 실습) · K-NIBRT (산학협력 프로그램)", "한경닷컴": "이랜드 (공동 과정)", "삼성전자": "삼성그룹 공동 과정 (삼성화재 유성연수원 개강)", "롯데지주": "롯데그룹 공동 과정", "포스코 인재창조원": "포스코 중소기업 컨소시엄 (신청 창구)", "NC AI": "광주상공회의소 (광주 과정 교육장)"};
+const rows=D.map(r=>[...r,(r[5]!=null?r[5]/r[3]:null),CS[r[1]]||""]);
+let sk=0,asc=true;
+const f=n=>n==null?'<span class="na">-</span>':n.toLocaleString('ko-KR');
+function render(){
+ const q=document.getElementById('q').value.trim().toLowerCase();
+ const un=document.getElementById('under').checked, mk=document.getElementById('mark').checked;
+ let r=rows.filter(x=>(!q||(x[1]+x[2]+x[7]).toLowerCase().includes(q))&&(!un||(x[4]==null||x[4]<x[3])));
+ r.sort((a,b)=>{let x=a[sk],y=b[sk];if(x==null)return 1;if(y==null)return -1;return (x>y?1:x<y?-1:0)*(asc?1:-1)});
+ const tb=document.getElementById('tb');tb.innerHTML='';
+ r.forEach(x=>{const tr=document.createElement('tr');if(mk&&HL.includes(x[1]))tr.className='hl';
+  const rt=x[6];const rc=rt==null?'<span class="na">-</span>':`<div class="rate ${rt<0.6?'low':''}"><span>${Math.round(rt*100)}%</span><div class="track"><div class="fill" style="width:${Math.min(100,rt*100)}%"></div></div></div>`;
+  tr.innerHTML=`<td class="num">${x[0]}</td><td class="co"></td><td></td><td class="num">${f(x[3])}</td><td class="num">${f(x[4])}</td><td class="num">${f(x[5])}</td><td class="num">${rc}</td><td class="cs"></td>`;
+  tr.children[1].textContent=x[1];tr.children[2].textContent=x[2];tr.children[7].textContent=x[7]||'';tb.appendChild(tr)});
+ const s=i=>r.reduce((a,x)=>a+(x[i]||0),0);const P=s(3),M=s(4),T=s(5);
+ document.getElementById('tf').innerHTML=`<td></td><td>합계 (${r.length}개사)</td><td></td><td class="num">${f(P)}</td><td class="num">${f(M)}</td><td class="num">${f(T)}</td><td class="num">${P?Math.round(T/P*100)+'%':'-'}</td><td></td>`;
+ document.querySelectorAll('th').forEach(th=>{th.querySelector('.arr')?.remove();if(+th.dataset.k===sk){const s=document.createElement('span');s.className='arr';s.textContent=asc?'▲':'▼';th.appendChild(s)}});
+}
+const P=rows.reduce((a,x)=>a+x[3],0),M=rows.reduce((a,x)=>a+(x[4]||0),0),T=rows.reduce((a,x)=>a+(x[5]||0),0);
+const under=rows.filter(x=>x[4]==null||x[4]<x[3]).length;
+document.getElementById('cards').innerHTML=[["참여 기업","50개사","72개 아카데미"],["계획 인원",P.toLocaleString()+"명","2026 목표 1만 명"],["모집 인원",M.toLocaleString()+"명","계획 대비 "+Math.round(M/P*100)+"%"],["훈련 인원",T.toLocaleString()+"명","계획 대비 "+Math.round(T/P*100)+"%"],["모집 미달 기업",under+"곳","계획 인원 미충족"]].map(c=>`<div class="card"><div class="l">${c[0]}</div><div class="v">${c[1]}</div><div class="s">${c[2]}</div></div>`).join('');
+document.querySelectorAll('th').forEach(th=>th.onclick=()=>{const k=+th.dataset.k;if(sk===k)asc=!asc;else{sk=k;asc=k<=2}render()});
+['q','under','mark'].forEach(id=>document.getElementById(id).addEventListener('input',render));
+render();
+</script></body></html>
