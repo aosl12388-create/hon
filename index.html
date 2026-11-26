@@ -617,6 +617,18 @@ body { --logo-h: 16px; --logo-h-sm: 16px; }
 .stat-help { font-size: 12px; color: var(--muted); line-height: 1.5; margin: 2px 0 0; }
 .stat-card.is-hero .stat-help { color: rgba(255,255,255,.85); }
 @media (max-width: 1024px) { .guide { grid-template-columns: 1fr; } }
+.wform { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-4); }
+.wform label { display: grid; gap: 6px; font-size: 13px; font-weight: 700; color: var(--soft-ink); }
+.wform textarea.ctl { min-height: 120px; height: auto; line-height: 1.6; }
+.wform .span3 { grid-column: 1 / -1; }
+.card-head .inline-pm { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--soft-ink); }
+.wlist { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3); margin-top: var(--s-5); }
+.wlist:empty { display: none; }
+.wcard { background: var(--ivory-50); border-radius: var(--r-md); padding: var(--s-4); font-size: 13px; line-height: 1.6; }
+.wcard h3 { margin: 0 0 8px; font-size: 14px; display: flex; justify-content: space-between; gap: 8px; }
+.wcard h3 span { font-weight: 400; color: var(--muted); font-size: 12px; }
+.wcard dl { margin: 0; } .wcard dt { font-weight: 700; color: var(--ink); margin-top: 6px; } .wcard dd { margin: 2px 0 0; white-space: pre-wrap; color: var(--soft-ink); }
+@media (max-width: 1024px) { .wform, .wlist { grid-template-columns: 1fr; } }
 #gate { position: fixed; inset: 0; background: var(--ivory-50); display: none; place-items: center; z-index: 100; padding: 24px; }
 #gate.on { display: grid; }
 #gate .db-card { max-width: 420px; width: 100%; }
@@ -735,7 +747,7 @@ select.off { background: var(--red-10); }
 
     <!-- DAILY -->
     <section class="view" id="view-daily">
-      <div class="guide"><div class="db-tint"><h3><b>1</b>하루 활동을 한 건씩 기록</h3><p>미팅·전화·메일·제안 등 오늘 한 영업 활동을 아래 입력칸에 한 건씩 남겨요. 저장하면 구글 시트 '영업 활동 로그' 탭에 쌓여요.</p></div><div class="db-tint"><h3><b>2</b>숫자 카드로 오늘 한눈에</h3><p>오늘 활동 수, 미팅, 제안·견적 건수와 앞으로 7일 안에 잡힌 다음 일정을 보여줘요. 작은 배지는 전날과 비교한 증감이에요.</p></div><div class="db-tint"><h3><b>3</b>슬랙 보고는 복사만</h3><p>맨 아래 '슬랙 공유용 데일리 보고'가 기록을 PM별로 자동 정리해요. '텍스트 복사'를 눌러 슬랙에 붙여 넣으면 끝이에요.</p></div></div>
+      <div class="guide"><div class="db-tint"><h3><b>1</b>하루 활동을 한 건씩 기록</h3><p>미팅·전화·메일·제안은 아래 '활동 추가'에 한 건씩, 하루 정리는 '직접 쓰는 데일리 보고'에 자유롭게 적어요. 모두 구글 시트에 저장돼요.</p></div><div class="db-tint"><h3><b>2</b>숫자 카드로 오늘 한눈에</h3><p>오늘 활동 수, 미팅, 제안·견적 건수와 앞으로 7일 안에 잡힌 다음 일정을 보여줘요. 작은 배지는 전날과 비교한 증감이에요.</p></div><div class="db-tint"><h3><b>3</b>슬랙 보고는 복사만</h3><p>맨 아래 '슬랙 공유용 데일리 보고'가 기록을 PM별로 자동 정리해요. '텍스트 복사'를 눌러 슬랙에 붙여 넣으면 끝이에요.</p></div></div>
       <div class="toolbar">
         <label>날짜<input type="date" class="ctl" id="d-date"></label>
         <div class="btn-row"><button class="btn" id="d-prev" aria-label="전날">‹ 전날</button><button class="btn" id="d-today">오늘</button><button class="btn" id="d-next" aria-label="다음날">다음날 ›</button></div>
@@ -774,7 +786,20 @@ select.off { background: var(--red-10); }
       </div>
       <div class="db-section">
         <article class="db-card">
-          <header class="card-head"><div><h2 class="card-title">슬랙 공유용 데일리 보고</h2><p class="card-sub">위 기록으로 자동 작성돼요 · 복사해서 바로 붙여 넣으세요</p></div><button class="btn primary" data-copy="d-report">텍스트 복사</button></header>
+          <header class="card-head"><div><h2 class="card-title">직접 쓰는 데일리 보고</h2><p class="card-sub">PM마다 오늘 한 일·내일 할 일·이슈를 직접 적어요 · 저장하면 구글 시트 '보고 작성' 탭에 남아요</p></div>
+            <label class="inline-pm">작성자<select class="ctl" id="d-wpm"></select></label></header>
+          <form class="wform" id="d-wform" autocomplete="off">
+            <label>오늘 한 일<textarea class="ctl" name="a" rows="5" placeholder="- GS리테일 미팅 (2027 수요 확인)&#10;- 한양대 제안서 송부"></textarea></label>
+            <label>내일 할 일<textarea class="ctl" name="b" rows="5" placeholder="- 두나무 후속 미팅 준비"></textarea></label>
+            <label>이슈·요청 사항<textarea class="ctl" name="c" rows="5" placeholder="- 견적 기준 확인 필요"></textarea></label>
+            <div class="btn-row span3"><button class="btn primary" type="submit">보고 저장</button><button class="btn" type="button" data-fill="d">활동 기록으로 '오늘 한 일' 채우기</button><span class="card-sub" id="d-wstate"></span></div>
+          </form>
+          <div class="wlist" id="d-wlist"></div>
+        </article>
+      </div>
+      <div class="db-section">
+        <article class="db-card">
+          <header class="card-head"><div><h2 class="card-title">슬랙 공유용 데일리 보고</h2><p class="card-sub">직접 쓴 보고와 활동 기록을 합쳐 자동으로 만들어요 · 복사해서 바로 붙여 넣으세요</p></div><button class="btn primary" data-copy="d-report">텍스트 복사</button></header>
           <pre class="report" id="d-report"></pre>
         </article>
       </div>
@@ -782,7 +807,7 @@ select.off { background: var(--red-10); }
 
     <!-- WEEKLY -->
     <section class="view" id="view-weekly">
-      <div class="guide"><div class="db-tint"><h3><b>1</b>한 주(월~일) 단위로 모아 보기</h3><p>데일리에 남긴 기록을 주 단위로 합쳐 보여줘요. 위쪽 날짜를 바꾸거나 ‹ 지난주 / 다음 주 ›로 이동해요.</p></div><div class="db-tint"><h3><b>2</b>지난주와 비교</h3><p>카드의 배지(▲▼)는 지난주 대비 증감이에요. 요일별·유형별·PM별 막대로 이번 주 활동이 어디에 몰렸는지 봐요.</p></div><div class="db-tint"><h3><b>3</b>다음 주 계획까지 한 번에</h3><p>'다음 일정'을 넣어 둔 활동은 '다음 주 예정 액션'에 모여요. 위클리 보고 텍스트에도 함께 들어가요.</p></div></div>
+      <div class="guide"><div class="db-tint"><h3><b>1</b>한 주(월~일) 단위로 모아 보기</h3><p>데일리에 남긴 기록을 주 단위로 합쳐 보여줘요. 위쪽 날짜를 바꾸거나 ‹ 지난주 / 다음 주 ›로 이동해요.</p></div><div class="db-tint"><h3><b>2</b>지난주와 비교</h3><p>카드의 배지(▲▼)는 지난주 대비 증감이에요. 요일별·유형별·PM별 막대로 이번 주 활동이 어디에 몰렸는지 봐요.</p></div><div class="db-tint"><h3><b>3</b>다음 주 계획까지 한 번에</h3><p>'직접 쓰는 위클리 보고'에 성과·계획·이슈를 적으면 슬랙용 위클리 텍스트 맨 앞에 들어가요. '다음 일정'은 '다음 주 예정 액션'에 모여요.</p></div></div>
       <div class="toolbar">
         <label>주간 (월~일)<input type="date" class="ctl" id="w-date"></label>
         <div class="btn-row"><button class="btn" id="w-prev">‹ 지난주</button><button class="btn" id="w-this">이번 주</button><button class="btn" id="w-next">다음 주 ›</button></div>
@@ -817,7 +842,20 @@ select.off { background: var(--red-10); }
       </div>
       <div class="db-section">
         <article class="db-card">
-          <header class="card-head"><div><h2 class="card-title">슬랙 공유용 위클리 보고</h2><p class="card-sub">이번 주 기록과 다음 주 예정으로 자동 작성돼요</p></div><button class="btn primary" data-copy="w-report">텍스트 복사</button></header>
+          <header class="card-head"><div><h2 class="card-title">직접 쓰는 위클리 보고</h2><p class="card-sub">PM마다 이번 주 성과·다음 주 계획·이슈를 직접 적어요 · 주(월~일)마다 한 장씩 저장돼요</p></div>
+            <label class="inline-pm">작성자<select class="ctl" id="w-wpm"></select></label></header>
+          <form class="wform" id="w-wform" autocomplete="off">
+            <label>이번 주 성과<textarea class="ctl" name="a" rows="5" placeholder="- 신규 접촉 3곳, 제안 1건"></textarea></label>
+            <label>다음 주 계획<textarea class="ctl" name="b" rows="5" placeholder="- 12/2 GS리테일 제안서 공유"></textarea></label>
+            <label>이슈·요청 사항<textarea class="ctl" name="c" rows="5" placeholder="- 2027 단가 기준 논의 필요"></textarea></label>
+            <div class="btn-row span3"><button class="btn primary" type="submit">보고 저장</button><button class="btn" type="button" data-fill="w">이번 주 기록으로 성과·계획 채우기</button><span class="card-sub" id="w-wstate"></span></div>
+          </form>
+          <div class="wlist" id="w-wlist"></div>
+        </article>
+      </div>
+      <div class="db-section">
+        <article class="db-card">
+          <header class="card-head"><div><h2 class="card-title">슬랙 공유용 위클리 보고</h2><p class="card-sub">직접 쓴 위클리 보고와 이번 주 기록·다음 주 예정을 합쳐 자동으로 만들어요</p></div><button class="btn primary" data-copy="w-report">텍스트 복사</button></header>
           <pre class="report" id="w-report"></pre>
         </article>
       </div>
@@ -895,7 +933,8 @@ const C1 = '#1F687C', C2 = '#00A8BF';
 // ---------- state ----------
 let LISTS = clone(DEFAULT_LISTS);
 let PLAN = { plan: clone(SNAPSHOT.plan), leadPlan: clone(SNAPSHOT.leadPlan), leadTrack: clone(SNAPSHOT.leadTrack) };
-let ACTS = [];          // [{id, ...}]
+let ACTS = [];
+let REPORTS = [];          // [{id, ...}]
 let UID = null, MODE = 'connecting', CAN_WRITE = true;
 const LKEY = 'udi-cell-local-v2';
 function mergeLists(l) { const out = clone(DEFAULT_LISTS); if (l) for (const k in out) if (Array.isArray(l[k])) out[k] = l[k].filter(x => typeof x === 'string'); return out; }
@@ -943,7 +982,7 @@ async function load(quiet) {
   if (!KEY) { showGate(); return; }
   try {
     const j = await api('GET');
-    LISTS = mergeLists(j.lists); PLAN = j.plan; ACTS = j.acts || []; SHEET_URL = j.sheetUrl || '';
+    LISTS = mergeLists(j.lists); PLAN = j.plan; ACTS = j.acts || []; REPORTS = j.reports || []; SHEET_URL = j.sheetUrl || '';
     MODE = 'shared'; lastLoad = Date.now(); hideGate(); setSync(); renderAll();
     const sl = document.getElementById('sheet-link'); if (sl && SHEET_URL.startsWith('https://')) sl.href = SHEET_URL;
   } catch (e) { if (e && e.code === 'key') return; MODE = 'local'; setSync(); if (!quiet) toast('구글 시트에서 데이터를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.'); }
@@ -1077,11 +1116,20 @@ function renderDaily() {
   if (!f.date.value) f.date.value = dState.date;
   const orgs = new Set([...ACTS.map(a => a.org), ...PLAN.plan.map(p => p.client), ...PLAN.leadTrack.map(l => l.cat)].filter(Boolean));
   document.getElementById('org-list').innerHTML = [...orgs].slice(0, 300).map(o => `<option value="${esc(o)}">`).join('');
+  renderWrite('d');
   document.getElementById('d-report').textContent = dailyText(dState.date, dState.pm);
   f.querySelectorAll('input,select,textarea,button').forEach(x => x.disabled = !CAN_WRITE);
 }
 function dailyText(date, pm) {
   const day = ACTS.filter(a => a.date === date && (!pm || a.pm === pm));
+  const wr = REPORTS.filter(r => r.kind === 'daily' && r.date === date && (!pm || r.pm === pm));
+  if (wr.length) {
+    let s = `[데일리 영업 보고] ${date} (${DOW[parse(date).getDay()]})\n활동 기록 ${day.length}건 · 보고 작성 ${wr.length}명\n`;
+    const order = [...LISTS.pm, ...new Set([...day.map(a => a.pm), ...wr.map(r => r.pm)].filter(p => !LISTS.pm.includes(p)))];
+    order.forEach(p => { const w = writtenBlock('daily', date, p), xs = day.filter(a => a.pm === p); if (!w && !xs.length) return;
+      s += `\n■ ${p}\n` + (w || xs.map(a => `- [${a.type}] ${a.org}: ${a.content}\n`).join('')); });
+    return s.trim();
+  }
   if (!day.length) return `[데일리 영업 보고] ${date} (${DOW[parse(date).getDay()]})\n기록된 활동이 없어요.`;
   let s = `[데일리 영업 보고] ${date} (${DOW[parse(date).getDay()]})\n총 ${day.length}건 · 미팅 ${day.filter(a => isType(a, '미팅')).length} · 제안·견적 ${day.filter(a => isType(a, '제안')).length}\n`;
   const order = [...LISTS.pm, ...new Set(day.map(a => a.pm).filter(p => !LISTS.pm.includes(p)))];
@@ -1123,6 +1171,56 @@ document.getElementById('d-table').addEventListener('click', e => {
   if (act === 'del-ok') { const target = confirmDel; confirmDel = null; deleteAct(target).then(() => toast('삭제했어요')); renderDaily(); }
 });
 
+// ---------- WRITTEN REPORTS ----------
+const W_LABELS = { daily: ['오늘 한 일', '내일 할 일', '이슈·요청 사항'], weekly: ['이번 주 성과', '다음 주 계획', '이슈·요청 사항'] };
+const wDirty = { d: false, w: false };
+function repKey(pre) { return pre === 'd' ? { kind: 'daily', date: dState.date } : { kind: 'weekly', date: monday(wState.date) }; }
+function findRep(kind, date, pm) { return REPORTS.find(r => r.kind === kind && r.date === date && r.pm === pm); }
+const stamp = t => String(t || '').slice(5, 16).replace('T', ' ');
+function renderWrite(pre) {
+  const { kind, date } = repKey(pre), sel = document.getElementById(pre + '-wpm');
+  let last = ''; try { last = localStorage.getItem('udi-last-pm') || ''; } catch (e) {}
+  const cur = sel.value || (pre === 'd' ? dState.pm : wState.pm) || last;
+  sel.innerHTML = opts(LISTS.pm, cur, '선택');
+  const f = document.getElementById(pre + '-wform'), pm = sel.value, r = pm ? findRep(kind, date, pm) : null;
+  if (!wDirty[pre] || f.dataset.for !== kind + date + pm) { f.a.value = r ? r.a : ''; f.b.value = r ? r.b : ''; f.c.value = r ? r.c : ''; f.dataset.for = kind + date + pm; wDirty[pre] = false; }
+  f.querySelectorAll('textarea,button').forEach(x => x.disabled = !pm || !CAN_WRITE);
+  document.getElementById(pre + '-wstate').textContent = !pm ? '먼저 작성자를 골라 주세요' : r ? '저장됨 · ' + stamp(r.updatedAt) : '아직 저장한 보고가 없어요';
+  const all = REPORTS.filter(x => x.kind === kind && x.date === date).sort((a, b) => LISTS.pm.indexOf(a.pm) - LISTS.pm.indexOf(b.pm));
+  const L = W_LABELS[kind];
+  document.getElementById(pre + '-wlist').innerHTML = all.map(x => `<div class="wcard"><h3>${esc(x.pm)}<span>${esc(stamp(x.updatedAt))}</span></h3><dl>${[x.a, x.b, x.c].map((v, i) => v ? `<dt>${L[i]}</dt><dd>${esc(v)}</dd>` : '').join('')}</dl></div>`).join('');
+}
+['d', 'w'].forEach(pre => {
+  const f = document.getElementById(pre + '-wform');
+  f.addEventListener('input', () => { wDirty[pre] = true; });
+  document.getElementById(pre + '-wpm').addEventListener('change', e => { wDirty[pre] = false; try { localStorage.setItem('udi-last-pm', e.target.value); } catch (x) {} renderWrite(pre); });
+  f.addEventListener('submit', async e => {
+    e.preventDefault(); const pm = document.getElementById(pre + '-wpm').value; if (!pm) { toast('작성자를 골라 주세요'); return; }
+    const { kind, date } = repKey(pre), body = { kind, date, pm, a: f.a.value.trim(), b: f.b.value.trim(), c: f.c.value.trim(), updatedAt: new Date().toISOString() };
+    REPORTS = REPORTS.filter(r => !(r.kind === kind && r.date === date && r.pm === pm)); if (body.a || body.b || body.c) REPORTS.push(body);
+    wDirty[pre] = false; renderAll(); toast('보고를 저장하는 중…');
+    try { await api('POST', { action: 'saveReport', report: body }); toast('보고를 저장했어요'); } catch (x) { handleWriteError(x); load(true); }
+  });
+  f.querySelector('[data-fill]').addEventListener('click', () => {
+    const pm = document.getElementById(pre + '-wpm').value; if (!pm) { toast('작성자를 골라 주세요'); return; }
+    if (pre === 'd') {
+      const xs = ACTS.filter(a => a.date === dState.date && a.pm === pm);
+      f.a.value = xs.map(a => `- [${a.type}] ${a.org}: ${a.content}`).join('\n');
+      const nx = xs.filter(a => a.next).map(a => `- ${a.org}: ${a.next}${a.nextDate ? ` (${md(a.nextDate)})` : ''}`); if (nx.length && !f.b.value.trim()) f.b.value = nx.join('\n');
+    } else {
+      const mon = monday(wState.date), xs = weekActs(mon, pm);
+      f.a.value = `- 활동 ${xs.length}건 (미팅 ${xs.filter(a => isType(a, '미팅')).length} · 제안·견적 ${xs.filter(a => isType(a, '제안')).length})\n` + xs.map(a => `- ${md(a.date)} [${a.type}] ${a.org}: ${a.content}`).join('\n');
+      const nMon = addDays(mon, 7), nEnd = addDays(mon, 13);
+      const nx = ACTS.filter(a => a.pm === pm && a.nextDate && a.nextDate >= nMon && a.nextDate <= nEnd).map(a => `- ${md(a.nextDate)} ${a.org}: ${a.next || a.content}`); if (nx.length && !f.b.value.trim()) f.b.value = nx.join('\n');
+    }
+    wDirty[pre] = true; toast('기록으로 채웠어요. 다듬은 뒤 저장해 주세요');
+  });
+});
+function writtenBlock(kind, date, pm) {
+  const L = W_LABELS[kind], r = findRep(kind, date, pm); if (!r) return '';
+  return [r.a, r.b, r.c].map((v, i) => v ? `[${L[i]}]\n${v}\n` : '').join('');
+}
+
 // ---------- WEEKLY ----------
 const wState = { date: today(), pm: '' };
 function weekActs(mon, pm) { const end = addDays(mon, 6); return ACTS.filter(a => a.date >= mon && a.date <= end && (!pm || a.pm === pm)); }
@@ -1154,6 +1252,7 @@ function renderWeekly() {
   document.getElementById('w-table').innerHTML = sorted.length ? '<thead><tr><th>날짜</th><th>PM</th><th>유형</th><th>기관·고객사</th><th>내용</th><th>결과·다음 액션</th><th>다음 일정</th><th>단계</th></tr></thead><tbody>' + actRows(sorted, true) + '</tbody>' : '';
   document.getElementById('w-empty').hidden = !!sorted.length;
   document.getElementById('w-sub').textContent = `${sorted.length}건 · 날짜순`;
+  renderWrite('w');
   document.getElementById('w-report').textContent = weeklyText(mon, wState.pm, cur, prev, nxt);
 }
 function weeklyText(mon, pm, cur, prev, nxt) {
@@ -1161,6 +1260,8 @@ function weeklyText(mon, pm, cur, prev, nxt) {
   s += `활동 ${cur.length}건 (지난주 ${prev.length}건) · 미팅 ${cur.filter(a => isType(a, '미팅')).length} · 제안·견적 ${cur.filter(a => isType(a, '제안')).length} · 접촉 기관 ${new Set(cur.map(a => a.org)).size}곳\n`;
   const won = cur.filter(a => a.stage === '수주'); if (won.length) s += `수주: ${won.map(a => a.org).join(', ')}\n`;
   const order = [...LISTS.pm, ...new Set(cur.map(a => a.pm).filter(p => !LISTS.pm.includes(p)))];
+  const wr = REPORTS.filter(r => r.kind === 'weekly' && r.date === mon && (!pm || r.pm === pm));
+  if (wr.length) { s += '\n■ PM별 위클리 보고\n'; order.forEach(p => { const w = writtenBlock('weekly', mon, p); if (w) s += `\n${p}\n${w}`; }); }
   s += '\n■ PM별 주요 활동\n';
   let any = false;
   order.forEach(p => { const xs = cur.filter(a => a.pm === p); if (!xs.length) return; any = true; s += `${p} (${xs.length}건)\n`; xs.slice().sort((a, b) => a.date.localeCompare(b.date)).forEach(a => { s += `- ${md(a.date)} [${a.type}] ${a.org}: ${a.content}${a.stage ? ` (${a.stage})` : ''}\n`; }); });
