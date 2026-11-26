@@ -35,6 +35,14 @@ button:disabled{opacity:.6}.foot{background:#1F687C;color:#fff;font-size:12px;pa
 <div id="done" class="hide"><h1><em>감사합니다.</em><br>참여 의향이 전달되었습니다.</h1>
 <p>담당자가 확인 후 곧 연락드리겠습니다.<br>궁금하신 점은 아래로 편하게 연락 주세요.<br>유디임팩트 홍성훈 PM<br><span class="ct">010-9095-4874 / <a href="mailto:shhong@udimpact.ai?subject=[참여 의향] K-뉴딜 아카데미">shhong@udimpact.ai</a></span></p></div>
 
+<div id="tst" class="hide"><h1>테스트 메일 받기<br><em>콜드메일 미리보기</em></h1>
+<p>회사 메일 주소를 넣으시면 실제 발송될 1·2·3차 메일 3통이<br>테스트로 바로 도착합니다. (udimpact.ai 주소만 가능)</p>
+<label for="tmail">받을 메일 주소 *</label><input id="tmail" placeholder="예) name@udimpact.ai">
+<div id="terr" class="err"></div>
+<button id="tb" type="button">테스트 메일 받기</button></div>
+<div id="tdone" class="hide"><h1><em>요청했습니다.</em><br>1~2분 안에 도착합니다.</h1>
+<p>메일함에서 <b>[테스트 1차·2차·3차]</b> 제목의 메일 3통을 확인해 주세요.<br>테스트 메일의 버튼으로 남긴 정보는 실제 기록에 섞이지 않습니다.<br>문의: 유디임팩트 홍성훈 PM<br><span class="ct">010-9095-4874 / <a href="mailto:shhong@udimpact.ai">shhong@udimpact.ai</a></span></p></div>
+
 <div id="bad" class="hide"><h1>링크를 확인할 수 없습니다.</h1><p>전화나 메일로 문의해 주시면 바로 안내드리겠습니다.<br>유디임팩트 홍성훈 PM<br><span class="ct">010-9095-4874 / <a href="mailto:shhong@udimpact.ai?subject=[참여 의향] K-뉴딜 아카데미">shhong@udimpact.ai</a></span></p></div>
 </div><div class="foot">유디임팩트 · <a href="https://udimpact.ai" target="_blank" rel="noopener">udimpact.ai</a></div></div>
 
@@ -46,11 +54,12 @@ var _q=q, k=(q.get('k')||'').split('x'), c=q.get('c')||(k.length===2?k[0]:''), t
 var isTest=q.get('m')==='t';
 if(q.get('k')||q.get('c')) history.replaceState(null,'',location.pathname);
 function $(i){return document.getElementById(i);}
-function show(i){['loading','ask','done','bad'].forEach(function(x){$(x).classList.toggle('hide',x!==i);});}
+function show(i){['loading','ask','done','bad','tst','tdone'].forEach(function(x){$(x).classList.toggle('hide',x!==i);});}
 function val(i){return $(i).value.trim();}
 function done(){show('done');}
 var nm=q.get('n')||'';
-if(!c||!t){show('bad');}else if(nm){$('co').textContent=nm;show('ask');}else{
+if(location.hash==='#test'){show('tst');}
+else if(!c||!t){show('bad');}else if(nm){$('co').textContent=nm;show('ask');}else{
   var shown=false;
   function setCo(d){if(shown)return;shown=true;if(d&&d.ok){$('co').textContent=d.company;show('ask');}else if(d){show('bad');}else{$('co').textContent='귀사';show('ask');}}
   window.__co=function(d){setCo(d);};
@@ -65,5 +74,12 @@ $('b').onclick=function(){
   // 응답을 읽지 않는 단순 전송(CORS 영향 없음). 저장은 구글 스크립트가 처리
   fetch(API,{method:'POST',mode:'no-cors',credentials:'omit',headers:{'Content-Type':'text/plain;charset=utf-8'},body:payload})
   .then(done).catch(function(){b.disabled=false;b.textContent='다시 시도하기';$('err').textContent='전달이 잘 되지 않았습니다. 다시 시도하시거나 shhong@udimpact.ai로 메일 주세요.';});
+};
+$('tb').onclick=function(){
+  var em=$('tmail').value.trim().toLowerCase();
+  if(!/^[a-z0-9._%+-]+@udimpact\.ai$/.test(em)){$('terr').textContent='udimpact.ai 메일 주소를 적어 주세요.';return;}
+  $('terr').textContent='';var b=$('tb');b.disabled=true;b.textContent='요청하는 중...';
+  fetch(API,{method:'POST',mode:'no-cors',credentials:'omit',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({mode:'test',email:em})})
+  .then(function(){show('tdone');}).catch(function(){b.disabled=false;b.textContent='다시 시도하기';$('terr').textContent='요청이 잘 되지 않았습니다. 잠시 후 다시 시도해 주세요.';});
 };
 </script></body></html>
