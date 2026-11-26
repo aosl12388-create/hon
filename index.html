@@ -923,7 +923,7 @@ function setSync() {
 }
 
 // ---------- persistence: Google Sheet via Apps Script web app ----------
-const API_URL = 'https://script.google.com/macros/s/TEST/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbz7aYLsz4dlaZK5KthJVu6C0_iSo3ywliWBRQs3t-JepkANdY_W-xwBPP95H2kByTOyrA/exec';
 let KEY = '', SHEET_URL = '', lastLoad = 0;
 try { const q = new URLSearchParams(location.search).get('k'); if (q) { localStorage.setItem('udi-cell-key', q); history.replaceState(null, '', location.pathname + location.hash); } KEY = localStorage.getItem('udi-cell-key') || ''; } catch (e) {}
 const bar = () => document.getElementById('loadbar');
