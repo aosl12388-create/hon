@@ -24,6 +24,7 @@ button:disabled{opacity:.6}.foot{background:#1F687C;color:#fff;font-size:12px;pa
 
 <div id="ask" class="hide"><h1><span id="co"></span> 담당자님,<br><em>참여 의향을 전달하시겠어요?</em></h1>
 <p>구속력은 없습니다. 연락받으실 분 정보를 남겨 주시면<br>유디임팩트 홍성훈 PM이 확인 후 연락드리겠습니다.<br><span class="ct">010-9095-4874 / <a href="mailto:shhong@udimpact.ai">shhong@udimpact.ai</a></span></p>
+<div id="cowrap" class="hide"><label for="cname">기업명 *</label><input id="cname" placeholder="예) ○○주식회사"></div>
 <label for="dept">담당 부서 *</label><input id="dept" placeholder="예) ESG경영팀">
 <label for="name">담당자 성함·직함 *</label><input id="name" placeholder="예) 홍길동 과장">
 <label for="phone">연락처 *</label><input id="phone" placeholder="예) 02-000-0000 / 010-0000-0000">
@@ -59,7 +60,7 @@ function val(i){return $(i).value.trim();}
 function done(){show('done');}
 var nm=q.get('n')||'';
 if(location.hash==='#test'){show('tst');}
-else if(!c||!t){show('bad');}else if(nm){$('co').textContent=nm;show('ask');}else{
+else if(!c||!t){var free=true;$('co').textContent='귀사';$('cowrap').classList.remove('hide');show('ask');}else if(nm){$('co').textContent=nm;show('ask');}else{
   var shown=false;
   function setCo(d){if(shown)return;shown=true;if(d&&d.ok){$('co').textContent=d.company;show('ask');}else if(d){show('bad');}else{$('co').textContent='귀사';show('ask');}}
   window.__co=function(d){setCo(d);};
@@ -70,7 +71,9 @@ $('b').onclick=function(){
   var info={dept:val('dept'),name:val('name'),phone:val('phone'),email:val('email'),memo:val('memo'),test:isTest};
   if(!info.dept||!info.name||!info.phone){$('err').textContent='부서, 성함, 연락처는 꼭 적어 주세요.';return;}
   $('err').textContent='';var b=$('b');b.disabled=true;b.textContent='전달하는 중...';
-  var payload=JSON.stringify({c:c,t:t,info:info});
+  var payload;
+  if(!c||!t){ info.company=val('cname'); if(!info.company){$('err').textContent='기업명, 부서, 성함, 연락처는 꼭 적어 주세요.';b.disabled=false;b.textContent='참여 의향 전달하기';return;} payload=JSON.stringify({mode:'free',info:info}); }
+  else payload=JSON.stringify({c:c,t:t,info:info});
   // 응답을 읽지 않는 단순 전송(CORS 영향 없음). 저장은 구글 스크립트가 처리
   fetch(API,{method:'POST',mode:'no-cors',credentials:'omit',headers:{'Content-Type':'text/plain;charset=utf-8'},body:payload})
   .then(done).catch(function(){b.disabled=false;b.textContent='다시 시도하기';$('err').textContent='전달이 잘 되지 않았습니다. 다시 시도하시거나 shhong@udimpact.ai로 메일 주세요.';});
