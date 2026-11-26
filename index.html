@@ -731,6 +731,7 @@ select.off { background: var(--red-10); }
       <p class="db-menu-label">ACTIVITY</p>
       <a href="#daily" data-v="daily">데일리 보고</a>
       <a href="#weekly" data-v="weekly">위클리 보고</a>
+      <a href="#import" data-v="import">슬랙 붙여넣기</a>
       <p class="db-menu-label">PIPELINE</p>
       <a href="#overview" data-v="overview">영업 계획 현황</a>
       <a href="#plan" data-v="plan">Cell 영업 계획</a>
@@ -857,6 +858,39 @@ select.off { background: var(--red-10); }
         <article class="db-card">
           <header class="card-head"><div><h2 class="card-title">슬랙 공유용 위클리 보고</h2><p class="card-sub">직접 쓴 위클리 보고와 이번 주 기록·다음 주 예정을 합쳐 자동으로 만들어요</p></div><button class="btn primary" data-copy="w-report">텍스트 복사</button></header>
           <pre class="report" id="w-report"></pre>
+        </article>
+      </div>
+    </section>
+
+    <!-- IMPORT FROM SLACK -->
+    <section class="view" id="view-import">
+      <div class="guide">
+        <div class="db-tint"><h3><b>1</b>슬랙 글을 그대로 붙여 넣기</h3><p>슬랙에 올린 데일리·위클리 보고나 메모를 복사해서 아래 칸에 붙여 넣어요. 여러 사람 글을 한꺼번에 넣어도 돼요.</p></div>
+        <div class="db-tint"><h3><b>2</b>자동 분류 결과 확인</h3><p>'분류하기'를 누르면 줄마다 PM·활동 유형·기관·다음 일정을 찾아 표로 보여줘요. 틀린 칸은 표에서 바로 고쳐요.</p></div>
+        <div class="db-tint"><h3><b>3</b>골라서 저장</h3><p>저장할 줄만 체크하고 저장하면 활동 기록으로 들어가요. '한 일/할 일/이슈'로 나뉜 글은 직접 쓴 보고로도 저장할 수 있어요.</p></div>
+      </div>
+      <div class="db-section">
+        <article class="db-card">
+          <header class="card-head"><div><h2 class="card-title">슬랙 내용 붙여넣기</h2><p class="card-sub">PM 이름이 글에 없으면 아래 '기본 PM'으로 넣어요 · 날짜가 없으면 '기준 날짜'로 넣어요</p></div></header>
+          <div class="toolbar" style="margin-bottom:12px">
+            <label>기준 날짜<input type="date" class="ctl" id="i-date"></label>
+            <label>기본 PM<select class="ctl" id="i-pm"></select></label>
+            <label>보고 종류<select class="ctl" id="i-kind"><option value="daily">데일리</option><option value="weekly">위클리</option></select></label>
+          </div>
+          <textarea class="ctl" id="i-text" rows="10" style="width:100%;min-height:200px;line-height:1.6" placeholder="예)&#10;홍성훈 · 오늘 한 일&#10;- GS리테일 미팅: 2027 창업가형 인재 프로그램 수요 확인&#10;- 한양대 창업지원단 통화, 글로벌 액셀러레이팅 재발주 문의&#10;내일 할 일&#10;- GS리테일 제안서 초안 공유 (12/2)&#10;이슈&#10;- 2027 단가 기준 확인 필요"></textarea>
+          <div class="btn-row" style="margin-top:12px"><button class="btn primary" id="i-parse">분류하기</button><button class="btn" id="i-clear">지우기</button><span class="card-sub" id="i-sum"></span></div>
+        </article>
+      </div>
+      <div class="db-section" id="i-result" hidden>
+        <article class="db-card">
+          <header class="card-head"><div><h2 class="card-title">분류 결과 · 활동 기록</h2><p class="card-sub">체크한 줄만 저장돼요 · 기관이 비어 있으면 저장 전에 채워 주세요</p></div>
+            <div class="btn-row"><button class="btn" id="i-all">전체 선택/해제</button><button class="btn primary" id="i-save">선택한 활동 저장</button></div></header>
+          <div class="scroll edit"><table class="db-table" id="i-table"></table></div>
+        </article>
+        <article class="db-card" id="i-repcard">
+          <header class="card-head"><div><h2 class="card-title">분류 결과 · 직접 쓴 보고</h2><p class="card-sub">글에서 '한 일 / 할 일·계획 / 이슈' 부분을 찾아 PM별로 묶었어요 · 저장하면 같은 날짜(주)의 그 PM 보고를 덮어써요</p></div>
+            <button class="btn primary" id="i-saverep">보고로 저장</button></header>
+          <div class="wlist" id="i-reps" style="margin-top:0"></div>
         </article>
       </div>
     </section>
@@ -1007,7 +1041,7 @@ setInterval(() => { if (document.visibilityState === 'visible' && KEY && Date.no
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && KEY && Date.now() - lastLoad > 20000) load(true); });
 
 // ---------- routing ----------
-const VIEWS = { daily: ['DAILY REPORT', '데일리 영업 보고'], weekly: ['WEEKLY REPORT', '위클리 영업 보고'], overview: ['PIPELINE OVERVIEW', '27\' 영업 계획 현황'], plan: ['PIPELINE DATA', 'Cell 영업 계획'], lists: ['SETTINGS', '목록 관리'] };
+const VIEWS = { daily: ['DAILY REPORT', '데일리 영업 보고'], weekly: ['WEEKLY REPORT', '위클리 영업 보고'], import: ['SLACK IMPORT', '슬랙 내용 가져오기'], overview: ['PIPELINE OVERVIEW', '27\' 영업 계획 현황'], plan: ['PIPELINE DATA', 'Cell 영업 계획'], lists: ['SETTINGS', '목록 관리'] };
 function view() { const v = location.hash.slice(1); return VIEWS[v] ? v : 'daily'; }
 function route() {
   const v = view();
@@ -1021,6 +1055,7 @@ function renderHeader() {
   const v = view(), chip = document.getElementById('chip'), meta = document.getElementById('meta');
   if (v === 'daily') { meta.textContent = md(dState.date) + ' · ' + (dState.pm || '전체 PM'); chip.textContent = '기록 ' + ACTS.filter(a => a.date === dState.date).length + '건'; }
   else if (v === 'weekly') { const m = monday(wState.date); meta.textContent = `${md(m)} ~ ${md(addDays(m, 6))} · ` + (wState.pm || '전체 PM'); chip.textContent = '주간 집계'; }
+  else if (v === 'import') { meta.textContent = '슬랙에 올린 보고를 붙여 넣으면 활동 기록·보고로 나눠 저장해요'; chip.textContent = '자동 분류'; }
   else { meta.textContent = '예정액 = 사업총액 × 진행율 × 수주 확률'; chip.textContent = '27\' 매출 계획'; }
 }
 
@@ -1221,6 +1256,113 @@ function writtenBlock(kind, date, pm) {
   return [r.a, r.b, r.c].map((v, i) => v ? `[${L[i]}]\n${v}\n` : '').join('');
 }
 
+// ---------- SLACK IMPORT ----------
+const TYPE_RULES = [
+  ['제안서·견적', /제안서|제안|견적|proposal/i], ['미팅', /미팅|회의(?!록)|면담|방문|만남|meeting|줌|zoom|화상/i],
+  ['전화·연락', /전화|통화|콜|연락|카톡|문자/], ['이메일', /메일|e-?mail|회신/i], ['행사·네트워킹', /행사|포럼|세미나|네트워킹|컨퍼런스|박람회|설명회/],
+  ['입찰·공고 확인', /입찰|공고|나라장터|조달|rfp/i], ['내부 회의', /내부|팀 ?회의|주간회의|스크럼/]
+];
+const STAGE_RULES = [['수주', /수주|계약 ?(완료|체결)|확정/], ['협상', /협상|단가|조율/], ['제안', /제안|견적/], ['미팅', /미팅|면담|방문/], ['첫 접촉', /첫 ?접촉|최초|콜드|처음/], ['보류', /보류|홀드|중단/]];
+const SEC_RULES = [['a', /(오늘|금주|이번 ?주)?\s*(한 ?일|진행|성과|완료|실적)/], ['b', /(내일|다음 ?주|차주)?\s*(할 ?일|계획|예정|todo|to-do)/i], ['c', /이슈|요청|건의|리스크|고민|논의 ?필요/]];
+let IMP = { acts: [], reps: [] };
+function guessType(t) { for (const [n, re] of TYPE_RULES) if (re.test(t)) return LISTS.actType.includes(n) ? n : (LISTS.actType.find(x => x.includes(n.slice(0, 2))) || n); return LISTS.actType.includes('기타') ? '기타' : (LISTS.actType[0] || ''); }
+function guessStage(t) { for (const [n, re] of STAGE_RULES) if (re.test(t)) return LISTS.stage.includes(n) ? n : ''; return ''; }
+function findDate(t, base) {
+  const y = parse(base).getFullYear();
+  let m = t.match(/(\d{4})[.\-/](\d{1,2})[.\-/](\d{1,2})/); if (m) return `${m[1]}-${pad(m[2])}-${pad(m[3])}`;
+  m = t.match(/(\d{1,2})\s*[\/.]\s*(\d{1,2})(?!\d)/) || t.match(/(\d{1,2})월\s*(\d{1,2})일/);
+  if (m) { const mm = +m[1], dd = +m[2]; if (mm >= 1 && mm <= 12 && dd >= 1 && dd <= 31) { let yy = y; if (mm < parse(base).getMonth() + 1 - 6) yy++; return `${yy}-${pad(mm)}-${pad(dd)}`; } }
+  if (/내일/.test(t)) return addDays(base, 1); if (/모레/.test(t)) return addDays(base, 2);
+  return '';
+}
+function findPm(line) { return LISTS.pm.find(p => line.includes(p)) || ''; }
+const knownOrgs = () => [...new Set([...ACTS.map(a => a.org), ...PLAN.plan.map(p => p.client), ...PLAN.leadTrack.map(l => l.cat)].filter(o => o && o.length >= 2))].sort((a, b) => b.length - a.length);
+const KW = /\s*(미팅|회의|면담|방문|통화|전화|연락|메일|이메일|제안서?|견적|송부|발송|참석|문의|공유|확인)\s*$/;
+const cleanOrg = o => { o = o.trim(); for (let k = 0; k < 3; k++) o = o.replace(KW, '').replace(/(에서|에게|께|과|와|랑|측|은|는|이|가|을|를|에)$/, '').trim(); return o; };
+function splitOrg(body) {
+  let m = body.match(/^\[[^\]]+\]\s*/); if (m) body = body.slice(m[0].length);
+  m = body.match(/^([^:：]{2,30}?)\s*[:：]\s*(.+)$/) || body.match(/^([^:：]{2,30}?)\s+[\-–—]\s+(.+)$/);
+  if (m && cleanOrg(m[1])) return [cleanOrg(m[1]), m[2].trim()];
+  const k = knownOrgs().find(o => body.includes(o)); if (k) return [k, body];
+  const t = body.split(/\s+/);
+  if (t.length > 1 && !/^(오늘|내일|이번|다음|금주|차주|전체|내부|팀)/.test(t[0])) {
+    let org = t[0].replace(/[,，]$/, '');
+    if (t[1] && /^[가-힣A-Za-z0-9]*(실|팀|단|센터|본부|부|재단|대학교|대학|그룹|사업단|창업지원단|추진실)[,，]?$/.test(t[1])) org += ' ' + t[1].replace(/[,，]$/, '');
+    org = cleanOrg(org); if (org.length >= 2) return [org, body];
+  }
+  return ['', body];
+}
+function parseSlack(text, baseDate, defPm, kind) {
+  const acts = [], reps = {}; let pm = defPm, sec = 'a', last = null;
+  const lines = text.replace(/\r/g, '').split('\n');
+  for (let raw of lines) {
+    let line = raw.trim(); if (!line) continue;
+    if (/^\[(데일리|위클리).*보고\]/.test(line) || /^(총|활동 기록|활동)\s*\d+건/.test(line) || /^■\s*(PM별|다음 주 예정)/.test(line)) continue;
+    const isItem = /^([-•·*▪◦–]|\d+[.)]\s|→)/.test(line);
+    const pmHere = findPm(line);
+    // header line: contains PM name and is short, or slack name/time header
+    if (!isItem && pmHere && (line.length <= 30 || /오전|오후|\d{1,2}:\d{2}/.test(line))) { pm = pmHere; sec = 'a'; const sm = SEC_RULES.find(([, re]) => re.test(line.replace(pmHere, ''))); if (sm) sec = sm[0]; last = null; continue; }
+    const strip = line.replace(/^■\s*|^\[|\]$/g, '').replace(/[:：]$/, '').trim();
+    if (!isItem && strip.length <= 16) { const sm = SEC_RULES.find(([, re]) => re.test(strip)); if (sm) { sec = sm[0]; last = null; continue; } }
+    let body = line.replace(/^([-•·*▪◦–]|\d+[.)])\s*/, '').trim();
+    if (/^→|^다음\s*[:：]/.test(body)) { body = body.replace(/^→\s*(다음\s*[:：])?\s*/, '').replace(/^다음\s*[:：]\s*/, ''); if (last) { last.next = body.replace(/\(\d{1,2}\/\d{1,2}.*?\)\s*$/, '').trim(); last.nextDate = findDate(body, baseDate) || last.nextDate; } (reps[pm] = reps[pm] || { a: [], b: [], c: [] }).b.push('- ' + body); continue; }
+    const linePm = (isItem && pmHere) ? pmHere : pm;
+    (reps[linePm || '(PM 미지정)'] = reps[linePm || '(PM 미지정)'] || { a: [], b: [], c: [] })[sec].push('- ' + body);
+    if (sec === 'c') { last = null; continue; }
+    const d = findDate(body, baseDate);
+    const [org, content] = splitOrg(body);
+    const act = { use: sec === 'a', date: sec === 'a' ? (d && d <= baseDate ? d : baseDate) : baseDate, pm: linePm, type: guessType(body), stage: guessStage(body), org, cat: LISTS.cat.find(c => body.includes(c)) || '', content: content.replace(/\s*\(\d{1,2}\/\d{1,2}[^)]*\)\s*$/, ''), next: '', nextDate: '' };
+    if (sec === 'b') { act.next = content; act.nextDate = d; act.content = content; act.use = false; }
+    if (/→|다음[:：]/.test(body)) { const [c1, n1] = body.split(/→|다음[:：]/); act.content = splitOrg(c1.trim())[1]; act.next = n1.trim(); act.nextDate = findDate(n1, baseDate); }
+    acts.push(act); last = act;
+  }
+  return { acts, reps: Object.entries(reps).filter(([p]) => p).map(([p, r]) => ({ kind, date: kind === 'weekly' ? monday(baseDate) : baseDate, pm: p, a: r.a.join('\n'), b: r.b.join('\n'), c: r.c.join('\n') })) };
+}
+function renderImport() {
+  const pmSel = document.getElementById('i-pm'); pmSel.innerHTML = opts(LISTS.pm, pmSel.value || (() => { try { return localStorage.getItem('udi-last-pm') || ''; } catch (e) { return ''; } })(), '선택');
+  const dt = document.getElementById('i-date'); if (!dt.value) dt.value = today();
+  const box = document.getElementById('i-result'); box.hidden = !IMP.acts.length && !IMP.reps.length; if (box.hidden) return;
+  const o = (list, v) => opts(list, v, '-');
+  document.getElementById('i-table').innerHTML = IMP.acts.length ? '<thead><tr><th class="c">저장</th><th>날짜</th><th>PM</th><th>유형</th><th>기관·고객사</th><th>내용</th><th>다음 액션</th><th>다음 일정</th><th>단계</th></tr></thead><tbody>' +
+    IMP.acts.map((a, i) => `<tr><td class="c"><input type="checkbox" data-i="${i}" data-f="use" ${a.use ? 'checked' : ''} aria-label="저장"></td>
+      <td><input type="date" data-i="${i}" data-f="date" value="${esc(a.date)}"></td>
+      <td><select data-i="${i}" data-f="pm" class="${a.pm ? '' : 'off'}">${o(LISTS.pm, a.pm)}</select></td>
+      <td><select data-i="${i}" data-f="type">${o(LISTS.actType, a.type)}</select></td>
+      <td><input data-i="${i}" data-f="org" value="${esc(a.org)}" class="${a.org ? '' : 'off'}" placeholder="기관 입력" style="width:150px"></td>
+      <td class="wrap"><input data-i="${i}" data-f="content" value="${esc(a.content)}" style="width:260px;max-width:none"></td>
+      <td><input data-i="${i}" data-f="next" value="${esc(a.next)}" style="width:180px;max-width:none"></td>
+      <td><input type="date" data-i="${i}" data-f="nextDate" value="${esc(a.nextDate)}"></td>
+      <td><select data-i="${i}" data-f="stage">${o(LISTS.stage, a.stage)}</select></td></tr>`).join('') + '</tbody>' : '';
+  const kind = document.getElementById('i-kind').value, L = W_LABELS[kind];
+  document.getElementById('i-repcard').hidden = !IMP.reps.length;
+  document.getElementById('i-reps').innerHTML = IMP.reps.map(r => `<div class="wcard"><h3>${esc(r.pm)}<span>${esc(kind === 'weekly' ? md(r.date) + ' 주' : md(r.date))}</span></h3><dl>${[r.a, r.b, r.c].map((v, i) => v ? `<dt>${L[i]}</dt><dd>${esc(v)}</dd>` : '').join('')}</dl></div>`).join('');
+  const n = IMP.acts.filter(a => a.use).length;
+  document.getElementById('i-sum').textContent = `활동 후보 ${IMP.acts.length}줄 (저장 선택 ${n}) · 보고 ${IMP.reps.length}명`;
+}
+document.getElementById('i-parse').onclick = () => {
+  const text = document.getElementById('i-text').value; if (!text.trim()) { toast('슬랙 내용을 붙여 넣어 주세요'); return; }
+  IMP = parseSlack(text, document.getElementById('i-date').value || today(), document.getElementById('i-pm').value, document.getElementById('i-kind').value);
+  renderImport(); if (!IMP.acts.length && !IMP.reps.length) toast('분류할 줄을 찾지 못했어요'); else document.getElementById('i-result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+document.getElementById('i-clear').onclick = () => { document.getElementById('i-text').value = ''; IMP = { acts: [], reps: [] }; renderImport(); document.getElementById('i-sum').textContent = ''; };
+document.getElementById('i-kind').onchange = () => { if (IMP.reps.length) document.getElementById('i-parse').click(); };
+document.getElementById('i-table').addEventListener('input', e => { const t = e.target, i = +t.dataset.i, f = t.dataset.f; if (!f) return; IMP.acts[i][f] = t.type === 'checkbox' ? t.checked : t.value; if (f === 'org' || f === 'pm') t.classList.toggle('off', !t.value);
+  const n = IMP.acts.filter(a => a.use).length; document.getElementById('i-sum').textContent = `활동 후보 ${IMP.acts.length}줄 (저장 선택 ${n}) · 보고 ${IMP.reps.length}명`; });
+document.getElementById('i-all').onclick = () => { const on = !IMP.acts.every(a => a.use); IMP.acts.forEach(a => a.use = on); renderImport(); };
+document.getElementById('i-save').onclick = async () => {
+  const sel = IMP.acts.filter(a => a.use); if (!sel.length) { toast('저장할 줄을 체크해 주세요'); return; }
+  const bad = sel.filter(a => !a.pm || !a.org || !a.type || !a.content || !a.date); if (bad.length) { toast(`PM·기관·유형·내용이 빈 줄이 ${bad.length}개 있어요`); return; }
+  const btn = document.getElementById('i-save'); btn.disabled = true;
+  let ok = 0; for (const a of sel) { const { use, ...body } = a; body.createdAt = new Date().toISOString(); body.updatedAt = body.createdAt; await saveAct(null, body); ok++; document.getElementById('i-sum').textContent = `저장 중… ${ok}/${sel.length}`; }
+  btn.disabled = false; IMP.acts = IMP.acts.filter(a => !a.use); renderImport(); toast(`활동 ${ok}건을 저장했어요`); load(true);
+};
+document.getElementById('i-saverep').onclick = async () => {
+  const rs = IMP.reps.filter(r => LISTS.pm.includes(r.pm)); if (!rs.length) { toast('목록에 있는 PM 이름이 붙은 보고가 없어요'); return; }
+  const btn = document.getElementById('i-saverep'); btn.disabled = true;
+  for (const r of rs) { const body = { ...r, updatedAt: new Date().toISOString() }; REPORTS = REPORTS.filter(x => !(x.kind === r.kind && x.date === r.date && x.pm === r.pm)); REPORTS.push(body); try { await api('POST', { action: 'saveReport', report: body }); } catch (e) { handleWriteError(e); } }
+  btn.disabled = false; renderAll(); toast(`보고 ${rs.length}건을 저장했어요`);
+};
+
 // ---------- WEEKLY ----------
 const wState = { date: today(), pm: '' };
 function weekActs(mon, pm) { const end = addDays(mon, 6); return ACTS.filter(a => a.date >= mon && a.date <= end && (!pm || a.pm === pm)); }
@@ -1402,7 +1544,7 @@ async function commitEdit(key, i) { const v = listsBox.querySelector('.li-edit')
 function doDelete(key, i) { const v = LISTS[key][i]; LISTS[key].splice(i, 1); pending = null; saveLists(); renderAll(); toast(`'${v}' 삭제했어요`); }
 
 // ---------- boot ----------
-function renderAll() { renderDaily(); renderWeekly(); renderOverview(); renderPlan(); renderLists(); renderHeader(); }
+function renderAll() { renderDaily(); renderWeekly(); renderImport(); renderOverview(); renderPlan(); renderLists(); renderHeader(); }
 setSync(); route(); renderAll(); load();
 </script>
 </body>
