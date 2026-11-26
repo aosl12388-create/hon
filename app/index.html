@@ -40,7 +40,8 @@ button:disabled{opacity:.6}.foot{background:#1F687C;color:#fff;font-size:12px;pa
 
 <script>
 var API='https://script.google.com/macros/s/AKfycbxoq0ZndaHD0ZxvaXS84WJvooRA9K-AfAAEuOKMnKlIBhjNdnCGgdkJs_7Ibr5_v68/exec';
-var q=new URLSearchParams(location.search), c=q.get('c')||'', t=q.get('t')||'';
+var q=new URLSearchParams(location.search), k=(q.get('k')||'').split('x'), c=q.get('c')||(k.length===2?k[0]:''), t=q.get('t')||(k.length===2?k[1]:'');
+if(q.get('k')||q.get('c')) history.replaceState(null,'',location.pathname);
 function $(i){return document.getElementById(i);}
 function show(i){['loading','ask','done','bad'].forEach(function(x){$(x).classList.toggle('hide',x!==i);});}
 function val(i){return $(i).value.trim();}
