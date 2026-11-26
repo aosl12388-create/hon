@@ -624,10 +624,13 @@ body { --logo-h: 16px; --logo-h-sm: 16px; }
 .card-head .inline-pm { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--soft-ink); }
 .wlist { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3); margin-top: var(--s-5); }
 .wlist:empty { display: none; }
+.wlist:has(> :only-child) { grid-template-columns: 1fr; }
 .wcard { background: var(--ivory-50); border-radius: var(--r-md); padding: var(--s-4); font-size: 13px; line-height: 1.6; }
 .wcard h3 { margin: 0 0 8px; font-size: 14px; display: flex; justify-content: space-between; gap: 8px; }
 .wcard h3 span { font-weight: 400; color: var(--muted); font-size: 12px; }
-.wcard dl { margin: 0; } .wcard dt { font-weight: 700; color: var(--ink); margin-top: 6px; } .wcard dd { margin: 2px 0 0; white-space: pre-wrap; color: var(--soft-ink); }
+.wcard dl { margin: 0; } .wcard h3 .ctl { font-weight: 700; }
+.wcard textarea.ctl { width: 100%; min-height: 90px; font-size: 13px; line-height: 1.6; background: var(--paper); margin-top: 4px; }
+.wcard .flab { font-weight: 700; color: var(--ink); margin-top: 8px; display: block; } .wcard dt { font-weight: 700; color: var(--ink); margin-top: 6px; } .wcard dd { margin: 2px 0 0; white-space: pre-wrap; color: var(--soft-ink); }
 @media (max-width: 1024px) { .wform, .wlist { grid-template-columns: 1fr; } }
 #gate { position: fixed; inset: 0; background: var(--ivory-50); display: none; place-items: center; z-index: 100; padding: 24px; }
 #gate.on { display: grid; }
@@ -883,8 +886,8 @@ select.off { background: var(--red-10); }
       </div>
       <div class="db-section" id="i-result" hidden>
         <article class="db-card">
-          <header class="card-head"><div><h2 class="card-title">분류 결과 · 활동 기록</h2><p class="card-sub">체크한 줄만 저장돼요 · 기관이 비어 있으면 저장 전에 채워 주세요</p></div>
-            <div class="btn-row"><button class="btn" id="i-all">전체 선택/해제</button><button class="btn primary" id="i-save">선택한 활동 저장</button></div></header>
+          <header class="card-head"><div><h2 class="card-title">분류 결과 · 활동 기록</h2><p class="card-sub">미팅·통화·메일·제안처럼 영업 활동으로 보이는 줄만 먼저 보여줘요 · 체크한 줄만 저장돼요</p></div>
+            <div class="btn-row"><button class="btn" id="i-more" hidden></button><button class="btn" id="i-all">전체 선택/해제</button><button class="btn primary" id="i-save">선택한 활동 저장</button></div></header>
           <div class="scroll edit"><table class="db-table" id="i-table"></table></div>
         </article>
         <article class="db-card" id="i-repcard">
@@ -1279,52 +1282,99 @@ function findPm(line) { return LISTS.pm.find(p => line.includes(p)) || ''; }
 const knownOrgs = () => [...new Set([...ACTS.map(a => a.org), ...PLAN.plan.map(p => p.client), ...PLAN.leadTrack.map(l => l.cat)].filter(o => o && o.length >= 2))].sort((a, b) => b.length - a.length);
 const KW = /\s*(미팅|회의|면담|방문|통화|전화|연락|메일|이메일|제안서?|견적|송부|발송|참석|문의|공유|확인)\s*$/;
 const cleanOrg = o => { o = o.trim(); for (let k = 0; k < 3; k++) o = o.replace(KW, '').replace(/(에서|에게|께|과|와|랑|측|은|는|이|가|을|를|에)$/, '').trim(); return o; };
+const ORG_STOP = /^(\d|\(|\[)|뉴딜|유니브셀|하나소셜|예비트랙|기창업|테스트|우수팀|참여팀|참여자|결과보고서|작성내용|모두싸인|SAP|내부|팀|신규|기존|1차|2차|자료|영업/;
+const ORG_SUFFIX = /(대학교|대학|재단|그룹|센터|진흥원|공사|은행|협회|사업단|창업지원단|산학협력단|시청|구청|도청|공단|원)$/;
 function splitOrg(body) {
   let m = body.match(/^\[[^\]]+\]\s*/); if (m) body = body.slice(m[0].length);
-  m = body.match(/^([^:：]{2,30}?)\s*[:：]\s*(.+)$/) || body.match(/^([^:：]{2,30}?)\s+[\-–—]\s+(.+)$/);
-  if (m && cleanOrg(m[1])) return [cleanOrg(m[1]), m[2].trim()];
-  const k = knownOrgs().find(o => body.includes(o)); if (k) return [k, body];
+  m = body.match(/^([^:：(]{2,30}?)\s*[:：]\s*(.+)$/) || body.match(/^([^:：]{2,30}?)\s+[\-–—]\s+(.+)$/);
+  if (m && cleanOrg(m[1]) && !ORG_STOP.test(cleanOrg(m[1]))) return [cleanOrg(m[1]), m[2].trim(), true];
+  const k = knownOrgs().find(o => body.includes(o) && !ORG_STOP.test(o)); if (k) return [k, body, true];
   const t = body.split(/\s+/);
-  if (t.length > 1 && !/^(오늘|내일|이번|다음|금주|차주|전체|내부|팀)/.test(t[0])) {
-    let org = t[0].replace(/[,，]$/, '');
-    if (t[1] && /^[가-힣A-Za-z0-9]*(실|팀|단|센터|본부|부|재단|대학교|대학|그룹|사업단|창업지원단|추진실)[,，]?$/.test(t[1])) org += ' ' + t[1].replace(/[,，]$/, '');
-    org = cleanOrg(org); if (org.length >= 2) return [org, body];
+  const first = cleanOrg((t[0] || '').replace(/[,，]$/, ''));
+  if (first.length >= 2 && ORG_SUFFIX.test(first) && !ORG_STOP.test(first)) {
+    let org = first; if (t[1] && /^[가-힣A-Za-z0-9]*(실|팀|단|센터|본부|부)[,，]?$/.test(t[1])) org += ' ' + cleanOrg(t[1]);
+    return [org, body, true];
   }
-  return ['', body];
+  // weak guess: first word followed by a team word or an activity word
+  if (first.length >= 2 && !ORG_STOP.test(first) && t[1] && (/^[가-힣A-Za-z0-9]*(실|팀|단|센터|본부)[,，]?$/.test(t[1]) || KW.test(t[1]) || /^(미팅|통화|메일|방문|면담)/.test(t[1]))) {
+    let org = first; if (/(실|팀|단|센터|본부)[,，]?$/.test(t[1])) org += ' ' + cleanOrg(t[1]);
+    return [org, body, false];
+  }
+  return ['', body, false];
+}
+const SALES_RE = /미팅|면담|방문|통화|전화|연락|메일|제안|견적|발송|송부|입찰|공고|포럼|네트워킹|설명회|콜드|영업|협력|계약|수주/;
+const DONE_RE = /작성|발송|확인|진행|미팅|파악|추가|구성|등록|구분|취합|안내|송부|검토|준비|정리|공유|참석|통화|논의|요청|완료|예정|지원|체크|제출|수정|구축/;
+function lineInfo(raw) {
+  const lead = (raw.match(/^[\t ]*/) || [''])[0].replace(/\t/g, '    ').length;
+  const t = raw.trim();
+  const m = t.match(/^([-•·*▪◦○●–■□▶►]|\d+[.)])\s*/);
+  const bullet = m ? m[1] : '';
+  const body = m ? t.slice(m[0].length).trim() : t;
+  let level = lead >= 2 ? 2 : 1;
+  if (/[◦○▪–]/.test(bullet)) level = 2;
+  return { raw, t, bullet, body, lead, level };
+}
+function sectionOf(text) {
+  const x = text.replace(/^\[|\]$/g, '').trim();
+  if (/목표/.test(x)) return 'g';
+  if (/(익일|내일|다음 ?주|차주|향후).*(업무|계획|할 ?일)|^(할 ?일|계획|예정)/.test(x)) return 'b';
+  if (/이슈|요청|건의|리스크|고민|논의 ?필요/.test(x) && x.length <= 16) return 'c';
+  if (/(금일|오늘|이번 ?주|금주).*(업무|한 ?일|진행|성과)|^(한 ?일|진행 ?사항|성과|실적|완료)/.test(x)) return 'a';
+  return '';
 }
 function parseSlack(text, baseDate, defPm, kind) {
-  const acts = [], reps = {}; let pm = defPm, sec = 'a', last = null;
-  const lines = text.replace(/\r/g, '').split('\n');
-  for (let raw of lines) {
-    let line = raw.trim(); if (!line) continue;
-    if (/^\[(데일리|위클리).*보고\]/.test(line) || /^(총|활동 기록|활동)\s*\d+건/.test(line) || /^■\s*(PM별|다음 주 예정)/.test(line)) continue;
-    const isItem = /^([-•·*▪◦–]|\d+[.)]\s|→)/.test(line);
-    const pmHere = findPm(line);
-    // header line: contains PM name and is short, or slack name/time header
-    if (!isItem && pmHere && (line.length <= 30 || /오전|오후|\d{1,2}:\d{2}/.test(line))) { pm = pmHere; sec = 'a'; const sm = SEC_RULES.find(([, re]) => re.test(line.replace(pmHere, ''))); if (sm) sec = sm[0]; last = null; continue; }
-    const strip = line.replace(/^■\s*|^\[|\]$/g, '').replace(/[:：]$/, '').trim();
-    if (!isItem && strip.length <= 16) { const sm = SEC_RULES.find(([, re]) => re.test(strip)); if (sm) { sec = sm[0]; last = null; continue; } }
-    let body = line.replace(/^([-•·*▪◦–]|\d+[.)])\s*/, '').trim();
-    if (/^→|^다음\s*[:：]/.test(body)) { body = body.replace(/^→\s*(다음\s*[:：])?\s*/, '').replace(/^다음\s*[:：]\s*/, ''); if (last) { last.next = body.replace(/\(\d{1,2}\/\d{1,2}.*?\)\s*$/, '').trim(); last.nextDate = findDate(body, baseDate) || last.nextDate; } (reps[pm] = reps[pm] || { a: [], b: [], c: [] }).b.push('- ' + body); continue; }
-    const linePm = (isItem && pmHere) ? pmHere : pm;
-    (reps[linePm || '(PM 미지정)'] = reps[linePm || '(PM 미지정)'] || { a: [], b: [], c: [] })[sec].push('- ' + body);
-    if (sec === 'c') { last = null; continue; }
-    const d = findDate(body, baseDate);
-    const [org, content] = splitOrg(body);
-    const act = { use: sec === 'a', date: sec === 'a' ? (d && d <= baseDate ? d : baseDate) : baseDate, pm: linePm, type: guessType(body), stage: guessStage(body), org, cat: LISTS.cat.find(c => body.includes(c)) || '', content: content.replace(/\s*\(\d{1,2}\/\d{1,2}[^)]*\)\s*$/, ''), next: '', nextDate: '' };
-    if (sec === 'b') { act.next = content; act.nextDate = d; act.content = content; act.use = false; }
-    if (/→|다음[:：]/.test(body)) { const [c1, n1] = body.split(/→|다음[:：]/); act.content = splitOrg(c1.trim())[1]; act.next = n1.trim(); act.nextDate = findDate(n1, baseDate); }
-    acts.push(act); last = act;
+  const acts = [], reps = {}; let pm = defPm, sec = 'a', group = '', lastAct = null;
+  const L = text.replace(/\r/g, '').split('\n').map(lineInfo).filter(x => x.t);
+  const bucket = who => (reps[who] = reps[who] || { a: [], b: [], c: [], g: [] });
+  const push = (who, sc, line) => bucket(who)[sc].push(line);
+  for (let i = 0; i < L.length; i++) {
+    const x = L[i], nx = L[i + 1];
+    if (/^\[(데일리|위클리).*보고\]/.test(x.t) || /^(총|활동 기록|활동)\s*\d+건/.test(x.t) || /^■\s*(PM별|다음 주 예정)/.test(x.t)) continue;
+    const pmHere = findPm(x.t);
+    if ((!x.bullet || x.bullet === '■') && pmHere && (x.t.length <= 30 || /오전|오후|\d{1,2}:\d{2}/.test(x.t))) { pm = pmHere; sec = 'a'; group = ''; lastAct = null; const sc = sectionOf(x.t.replace(pmHere, '')); if (sc) sec = sc; continue; }
+    // bracket / heading line -> section (and goal text)
+    const br = x.body.match(/^\[(.+)\]$/) || (x.body.match(/^■\s*(.+)$/));
+    const secHit = br ? sectionOf(br[1]) : (!x.bullet || x.body.length <= 16) && x.body.length <= 20 ? sectionOf(x.body) : '';
+    if (br || secHit) {
+      const label = br ? br[1] : x.body;
+      group = ''; lastAct = null;
+      if (secHit === 'g') { push(pm || '', 'g', label.trim()); sec = 'a'; continue; }
+      sec = secHit || (br ? 'a' : sec);
+      if (br) push(pm || '', sec, '\n[' + label.trim() + ']');
+      continue;
+    }
+    // group header: short line without action verb, followed by a deeper or bullet line
+    const HEAD_RE = /(트랙|스퀘어|기타\s*사항|^기타|사전\s*준비|사업\s*준비|공통|업무지원 ?사항)$/;
+    const END_VERB = /(작성|발송|확인|진행|미팅|파악|추가|구성|등록|구분|취합|안내|송부|검토|정리|공유|참석|통화|논의|요청|완료|예정|체크|제출|수정|구축|必|지원|발굴|조사|설계|협의|회신)\s*[!.]?$/;
+    const isHeader = !/[:：→]/.test(x.body) && x.body.length <= 24 && (HEAD_RE.test(x.body) || (nx && nx.lead > x.lead && !END_VERB.test(x.body)) || (x.bullet && nx && nx.level > x.level));
+    if (isHeader) { group = x.body; lastAct = null; push(pm || '', sec, '\n' + group); continue; }
+    let body = x.body;
+    if (/^→|^다음\s*[:：]/.test(body)) { body = body.replace(/^→\s*(다음\s*[:：])?\s*/, '').replace(/^다음\s*[:：]\s*/, ''); if (lastAct) { lastAct.next = body.replace(/\(\d{1,2}\/\d{1,2}.*?\)\s*$/, '').trim(); lastAct.nextDate = findDate(body, baseDate) || lastAct.nextDate; } push(pm || '', 'b', '- ' + body); continue; }
+    const who = (pmHere && x.bullet) ? pmHere : pm;
+    push(who || '', sec, (group ? '  · ' : '- ') + body);
+    if (sec === 'c' || sec === 'g') { lastAct = null; continue; }
+    const d = findDate(body, baseDate), [org, content, strong] = splitOrg(body);
+    const salesy = SALES_RE.test(body);
+    const act = { use: sec === 'a' && salesy && !!strong, sales: salesy, group, date: sec === 'a' ? (d && d <= baseDate ? d : baseDate) : baseDate, pm: who, type: guessType(body), stage: guessStage(body), org: org || '',
+      cat: LISTS.cat.find(c => body.includes(c)) || '', content: (group ? group + ' · ' : '') + content.replace(/\s*\(\d{1,2}\/\d{1,2}[^)]*\)\s*$/, ''), next: '', nextDate: '' };
+    if (sec === 'b') { act.next = content; act.nextDate = d; act.use = false; }
+    if (/→|다음[:：]/.test(body)) { const [c1, n1] = body.split(/→|다음[:：]/); act.content = (group ? group + ' · ' : '') + splitOrg(c1.trim())[1]; act.next = n1.trim(); act.nextDate = findDate(n1, baseDate); }
+    acts.push(act); lastAct = act;
   }
-  return { acts, reps: Object.entries(reps).filter(([p]) => p).map(([p, r]) => ({ kind, date: kind === 'weekly' ? monday(baseDate) : baseDate, pm: p, a: r.a.join('\n'), b: r.b.join('\n'), c: r.c.join('\n') })) };
+  const fmt = arr => arr.join('\n').replace(/^\n+/, '').replace(/\n{3,}/g, '\n\n');
+  return { acts, reps: Object.entries(reps).map(([p, r]) => ({ kind, date: kind === 'weekly' ? monday(baseDate) : baseDate, pm: p, a: (r.g.length ? r.g.map(g => '[' + g + ']').join('\n') + '\n\n' : '') + fmt(r.a), b: fmt(r.b), c: fmt(r.c) })).filter(r => r.a || r.b || r.c) };
 }
 function renderImport() {
-  const pmSel = document.getElementById('i-pm'); pmSel.innerHTML = opts(LISTS.pm, pmSel.value || (() => { try { return localStorage.getItem('udi-last-pm') || ''; } catch (e) { return ''; } })(), '선택');
+  const pmSel = document.getElementById('i-pm'); pmSel.innerHTML = opts(LISTS.pm, pmSel.value || (() => { try { return localStorage.getItem('udi-last-pm') || ''; } catch (e) { return ''; } })(), '선택 (글에 이름이 없을 때 필수)');
   const dt = document.getElementById('i-date'); if (!dt.value) dt.value = today();
   const box = document.getElementById('i-result'); box.hidden = !IMP.acts.length && !IMP.reps.length; if (box.hidden) return;
   const o = (list, v) => opts(list, v, '-');
-  document.getElementById('i-table').innerHTML = IMP.acts.length ? '<thead><tr><th class="c">저장</th><th>날짜</th><th>PM</th><th>유형</th><th>기관·고객사</th><th>내용</th><th>다음 액션</th><th>다음 일정</th><th>단계</th></tr></thead><tbody>' +
-    IMP.acts.map((a, i) => `<tr><td class="c"><input type="checkbox" data-i="${i}" data-f="use" ${a.use ? 'checked' : ''} aria-label="저장"></td>
+  const visible = IMP.acts.map((a, i) => [a, i]).filter(([a]) => IMP.showAll || a.use || a.sales);
+  const hiddenN = IMP.acts.length - visible.length;
+  document.getElementById('i-more').hidden = !hiddenN && !IMP.showAll;
+  document.getElementById('i-more').textContent = IMP.showAll ? '영업 활동 후보만 보기' : `업무 메모 ${hiddenN}줄도 보기`;
+  document.getElementById('i-table').innerHTML = visible.length ? '<thead><tr><th class="c">저장</th><th>날짜</th><th>PM</th><th>유형</th><th>기관·고객사</th><th>내용</th><th>다음 액션</th><th>다음 일정</th><th>단계</th></tr></thead><tbody>' +
+    visible.map(([a, i]) => `<tr><td class="c"><input type="checkbox" data-i="${i}" data-f="use" ${a.use ? 'checked' : ''} aria-label="저장"></td>
       <td><input type="date" data-i="${i}" data-f="date" value="${esc(a.date)}"></td>
       <td><select data-i="${i}" data-f="pm" class="${a.pm ? '' : 'off'}">${o(LISTS.pm, a.pm)}</select></td>
       <td><select data-i="${i}" data-f="type">${o(LISTS.actType, a.type)}</select></td>
@@ -1332,22 +1382,26 @@ function renderImport() {
       <td class="wrap"><input data-i="${i}" data-f="content" value="${esc(a.content)}" style="width:260px;max-width:none"></td>
       <td><input data-i="${i}" data-f="next" value="${esc(a.next)}" style="width:180px;max-width:none"></td>
       <td><input type="date" data-i="${i}" data-f="nextDate" value="${esc(a.nextDate)}"></td>
-      <td><select data-i="${i}" data-f="stage">${o(LISTS.stage, a.stage)}</select></td></tr>`).join('') + '</tbody>' : '';
+      <td><select data-i="${i}" data-f="stage">${o(LISTS.stage, a.stage)}</select></td></tr>`).join('') + '</tbody>' : '<tbody><tr><td class="empty">영업 활동으로 보이는 줄이 없어요. 아래 보고로 저장하거나 \'업무 메모도 보기\'에서 골라 주세요.</td></tr></tbody>';
   const kind = document.getElementById('i-kind').value, L = W_LABELS[kind];
   document.getElementById('i-repcard').hidden = !IMP.reps.length;
-  document.getElementById('i-reps').innerHTML = IMP.reps.map(r => `<div class="wcard"><h3>${esc(r.pm)}<span>${esc(kind === 'weekly' ? md(r.date) + ' 주' : md(r.date))}</span></h3><dl>${[r.a, r.b, r.c].map((v, i) => v ? `<dt>${L[i]}</dt><dd>${esc(v)}</dd>` : '').join('')}</dl></div>`).join('');
+  document.getElementById('i-reps').innerHTML = IMP.reps.map((r, ri) => `<div class="wcard"><h3><select class="ctl" data-ri="${ri}" style="min-height:32px;padding:2px 8px;${LISTS.pm.includes(r.pm) ? '' : 'background:var(--red-10)'}" aria-label="작성자">${opts(LISTS.pm, r.pm, 'PM 선택')}</select><span>${esc(kind === 'weekly' ? md(r.date) + ' 주' : md(r.date))}</span></h3>${['a', 'b', 'c'].map((k, i) => `<label class="flab">${L[i]}<textarea class="ctl" data-ri="${ri}" data-k="${k}" rows="${Math.min(14, Math.max(3, (r[k] || '').split('\n').length + 1))}">${esc(r[k])}</textarea></label>`).join('')}</div>`).join('');
   const n = IMP.acts.filter(a => a.use).length;
   document.getElementById('i-sum').textContent = `활동 후보 ${IMP.acts.length}줄 (저장 선택 ${n}) · 보고 ${IMP.reps.length}명`;
 }
 document.getElementById('i-parse').onclick = () => {
   const text = document.getElementById('i-text').value; if (!text.trim()) { toast('슬랙 내용을 붙여 넣어 주세요'); return; }
-  IMP = parseSlack(text, document.getElementById('i-date').value || today(), document.getElementById('i-pm').value, document.getElementById('i-kind').value);
+  const defPm = document.getElementById('i-pm').value;
+  if (!defPm && !LISTS.pm.some(p => text.includes(p))) { toast('글에 PM 이름이 없어요. 먼저 \'기본 PM\'을 골라 주세요'); document.getElementById('i-pm').focus(); return; }
+  try { if (defPm) localStorage.setItem('udi-last-pm', defPm); } catch (e) {}
+  IMP = parseSlack(text, document.getElementById('i-date').value || today(), defPm, document.getElementById('i-kind').value); IMP.showAll = false;
   renderImport(); if (!IMP.acts.length && !IMP.reps.length) toast('분류할 줄을 찾지 못했어요'); else document.getElementById('i-result').scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 document.getElementById('i-clear').onclick = () => { document.getElementById('i-text').value = ''; IMP = { acts: [], reps: [] }; renderImport(); document.getElementById('i-sum').textContent = ''; };
 document.getElementById('i-kind').onchange = () => { if (IMP.reps.length) document.getElementById('i-parse').click(); };
 document.getElementById('i-table').addEventListener('input', e => { const t = e.target, i = +t.dataset.i, f = t.dataset.f; if (!f) return; IMP.acts[i][f] = t.type === 'checkbox' ? t.checked : t.value; if (f === 'org' || f === 'pm') t.classList.toggle('off', !t.value);
   const n = IMP.acts.filter(a => a.use).length; document.getElementById('i-sum').textContent = `활동 후보 ${IMP.acts.length}줄 (저장 선택 ${n}) · 보고 ${IMP.reps.length}명`; });
+document.getElementById('i-more').onclick = () => { IMP.showAll = !IMP.showAll; renderImport(); };
 document.getElementById('i-all').onclick = () => { const on = !IMP.acts.every(a => a.use); IMP.acts.forEach(a => a.use = on); renderImport(); };
 document.getElementById('i-save').onclick = async () => {
   const sel = IMP.acts.filter(a => a.use); if (!sel.length) { toast('저장할 줄을 체크해 주세요'); return; }
@@ -1356,6 +1410,8 @@ document.getElementById('i-save').onclick = async () => {
   let ok = 0; for (const a of sel) { const { use, ...body } = a; body.createdAt = new Date().toISOString(); body.updatedAt = body.createdAt; await saveAct(null, body); ok++; document.getElementById('i-sum').textContent = `저장 중… ${ok}/${sel.length}`; }
   btn.disabled = false; IMP.acts = IMP.acts.filter(a => !a.use); renderImport(); toast(`활동 ${ok}건을 저장했어요`); load(true);
 };
+document.getElementById('i-reps').addEventListener('change', e => { const ri = e.target.dataset.ri; if (ri == null || e.target.tagName !== 'SELECT') return; IMP.reps[+ri].pm = e.target.value; renderImport(); });
+document.getElementById('i-reps').addEventListener('input', e => { const t = e.target; if (t.tagName === 'TEXTAREA') IMP.reps[+t.dataset.ri][t.dataset.k] = t.value; });
 document.getElementById('i-saverep').onclick = async () => {
   const rs = IMP.reps.filter(r => LISTS.pm.includes(r.pm)); if (!rs.length) { toast('목록에 있는 PM 이름이 붙은 보고가 없어요'); return; }
   const btn = document.getElementById('i-saverep'); btn.disabled = true;
