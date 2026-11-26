@@ -41,6 +41,7 @@ button:disabled{opacity:.6}.foot{background:#1F687C;color:#fff;font-size:12px;pa
 <script>
 var API='https://script.google.com/macros/s/AKfycbxoq0ZndaHD0ZxvaXS84WJvooRA9K-AfAAEuOKMnKlIBhjNdnCGgdkJs_7Ibr5_v68/exec';
 var q=new URLSearchParams(location.search), k=(q.get('k')||'').split('x'), c=q.get('c')||(k.length===2?k[0]:''), t=q.get('t')||(k.length===2?k[1]:'');
+var isTest=q.get('m')==='t';
 if(q.get('k')||q.get('c')) history.replaceState(null,'',location.pathname);
 function $(i){return document.getElementById(i);}
 function show(i){['loading','ask','done','bad'].forEach(function(x){$(x).classList.toggle('hide',x!==i);});}
@@ -54,7 +55,7 @@ if(!c||!t){show('bad');}else{
   .catch(function(){var s=document.createElement('script');s.src=API+'?mode=info&callback=__co&c='+encodeURIComponent(c)+'&t='+encodeURIComponent(t);s.onerror=function(){setCo(null);};document.body.appendChild(s);setTimeout(function(){setCo(null);},6000);});
 }
 $('b').onclick=function(){
-  var info={dept:val('dept'),name:val('name'),phone:val('phone'),email:val('email'),memo:val('memo')};
+  var info={dept:val('dept'),name:val('name'),phone:val('phone'),email:val('email'),memo:val('memo'),test:isTest};
   if(!info.dept||!info.name||!info.phone){$('err').textContent='부서, 성함, 연락처는 꼭 적어 주세요.';return;}
   $('err').textContent='';var b=$('b');b.disabled=true;b.textContent='전달하는 중...';
   var payload=JSON.stringify({c:c,t:t,info:info});
