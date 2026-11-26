@@ -35,12 +35,14 @@ button:disabled{opacity:.6}.foot{background:#1F687C;color:#fff;font-size:12px;pa
 <div id="done" class="hide"><h1><em>감사합니다.</em><br>참여 의향이 전달되었습니다.</h1>
 <p>담당자가 확인 후 곧 연락드리겠습니다.<br>직접 메일로 문의하시려면 <a href="mailto:shhong@udimpact.ai?subject=[참여 의향] K-뉴딜 아카데미">shhong@udimpact.ai</a>로 보내 주세요.</p></div>
 
-<div id="bad" class="hide"><h1>링크를 확인할 수 없습니다.</h1><p>메일로 문의해 주시면 바로 안내드리겠습니다.<br><a href="mailto:shhong@udimpact.ai?subject=[참여 의향] K-뉴딜 아카데미">shhong@udimpact.ai</a></p></div>
+<div id="bad" class="hide"><h1>링크를 확인할 수 없습니다.</h1><p>전화나 메일로 문의해 주시면 바로 안내드리겠습니다.<br>유디임팩트 홍성훈 PM<br><span class="ct">010-9095-4874 / <a href="mailto:shhong@udimpact.ai?subject=[참여 의향] K-뉴딜 아카데미">shhong@udimpact.ai</a></span></p></div>
 </div><div class="foot">유디임팩트 · <a href="https://udimpact.ai" target="_blank" rel="noopener">udimpact.ai</a></div></div>
 
 <script>
 var API='https://script.google.com/macros/s/AKfycbxoq0ZndaHD0ZxvaXS84WJvooRA9K-AfAAEuOKMnKlIBhjNdnCGgdkJs_7Ibr5_v68/exec';
-var q=new URLSearchParams(location.search), k=(q.get('k')||'').split('x'), c=q.get('c')||(k.length===2?k[0]:''), t=q.get('t')||(k.length===2?k[1]:'');
+var q=new URLSearchParams(location.search);
+try{ if(q.get('k')||q.get('c')) sessionStorage.setItem('kq',location.search); else if(sessionStorage.getItem('kq')) q=new URLSearchParams(sessionStorage.getItem('kq')); }catch(e){}
+var _q=q, k=(q.get('k')||'').split('x'), c=q.get('c')||(k.length===2?k[0]:''), t=q.get('t')||(k.length===2?k[1]:'');
 var isTest=q.get('m')==='t';
 if(q.get('k')||q.get('c')) history.replaceState(null,'',location.pathname);
 function $(i){return document.getElementById(i);}
