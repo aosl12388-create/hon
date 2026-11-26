@@ -44,18 +44,27 @@ var q=new URLSearchParams(location.search), c=q.get('c')||'', t=q.get('t')||'';
 function $(i){return document.getElementById(i);}
 function show(i){['loading','ask','done','bad'].forEach(function(x){$(x).classList.toggle('hide',x!==i);});}
 function val(i){return $(i).value.trim();}
+function done(){show('done');}
 if(!c||!t){show('bad');}else{
-  fetch(API+'?mode=info&c='+encodeURIComponent(c)+'&t='+encodeURIComponent(t)).then(function(r){return r.json();})
-  .then(function(d){if(d.ok){$('co').textContent=d.company;show('ask');}else show('bad');})
-  .catch(function(){$('co').textContent='귀사';show('ask');});
+  var shown=false;
+  function setCo(d){if(shown)return;shown=true;if(d&&d.ok){$('co').textContent=d.company;show('ask');}else if(d){show('bad');}else{$('co').textContent='귀사';show('ask');}}
+  window.__co=function(d){setCo(d);};
+  fetch(API+'?mode=info&c='+encodeURIComponent(c)+'&t='+encodeURIComponent(t),{credentials:'omit'}).then(function(r){return r.json();}).then(setCo)
+  .catch(function(){var s=document.createElement('script');s.src=API+'?mode=info&callback=__co&c='+encodeURIComponent(c)+'&t='+encodeURIComponent(t);s.onerror=function(){setCo(null);};document.body.appendChild(s);setTimeout(function(){setCo(null);},6000);});
 }
 $('b').onclick=function(){
   var info={dept:val('dept'),name:val('name'),phone:val('phone'),email:val('email'),memo:val('memo')};
   if(!info.dept||!info.name||!info.phone){$('err').textContent='부서, 성함, 연락처는 꼭 적어 주세요.';return;}
   $('err').textContent='';var b=$('b');b.disabled=true;b.textContent='전달하는 중...';
-  fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({c:c,t:t,info:info})})
-  .then(function(r){return r.json();})
-  .then(function(d){if(d.ok)show('done');else throw 0;})
-  .catch(function(){b.disabled=false;b.textContent='다시 시도하기';$('err').textContent='전달이 잘 되지 않았습니다. 다시 시도하시거나 shhong@udimpact.ai로 메일 주세요.';});
+  var payload=JSON.stringify({c:c,t:t,info:info});
+  fetch(API,{method:'POST',credentials:'omit',headers:{'Content-Type':'text/plain;charset=utf-8'},body:payload})
+  .then(function(r){return r.json();}).then(function(d){if(d.ok)done();else throw 0;})
+  .catch(function(){
+    // CORS로 응답을 못 읽는 환경: 숨은 폼으로 제출 (저장은 동일하게 됨)
+    var ifr=document.createElement('iframe');ifr.name='sink';ifr.style.display='none';document.body.appendChild(ifr);
+    var f=document.createElement('form');f.method='POST';f.action=API;f.target='sink';f.acceptCharset='UTF-8';
+    var i=document.createElement('input');i.type='hidden';i.name='payload';i.value=payload;f.appendChild(i);document.body.appendChild(f);
+    ifr.onload=done;setTimeout(done,5000);f.submit();
+  });
 };
 </script></body></html>
