@@ -1214,7 +1214,8 @@ const W_LABELS = { daily: ['오늘 한 일', '내일 할 일', '이슈·요청 �
 const wDirty = { d: false, w: false };
 function repKey(pre) { return pre === 'd' ? { kind: 'daily', date: dState.date } : { kind: 'weekly', date: monday(wState.date) }; }
 function findRep(kind, date, pm) { return REPORTS.find(r => r.kind === kind && r.date === date && r.pm === pm); }
-const stamp = t => String(t || '').slice(5, 16).replace('T', ' ');
+const stamp = t => { const d = new Date(t); return isNaN(d) ? '' : `${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+let repDel = null;
 function renderWrite(pre) {
   const { kind, date } = repKey(pre), sel = document.getElementById(pre + '-wpm');
   let last = ''; try { last = localStorage.getItem('udi-last-pm') || ''; } catch (e) {}
@@ -1226,10 +1227,18 @@ function renderWrite(pre) {
   document.getElementById(pre + '-wstate').textContent = !pm ? '먼저 작성자를 골라 주세요' : r ? '저장됨 · ' + stamp(r.updatedAt) : '아직 저장한 보고가 없어요';
   const all = REPORTS.filter(x => x.kind === kind && x.date === date).sort((a, b) => LISTS.pm.indexOf(a.pm) - LISTS.pm.indexOf(b.pm));
   const L = W_LABELS[kind];
-  document.getElementById(pre + '-wlist').innerHTML = all.map(x => `<div class="wcard"><h3>${esc(x.pm)}<span>${esc(stamp(x.updatedAt))}</span></h3><dl>${[x.a, x.b, x.c].map((v, i) => v ? `<dt>${L[i]}</dt><dd>${esc(v)}</dd>` : '').join('')}</dl></div>`).join('');
+  document.getElementById(pre + '-wlist').innerHTML = all.map(x => `<div class="wcard" data-pm="${esc(x.pm)}"><h3>${esc(x.pm)}<span>${esc(stamp(x.updatedAt))}<button class="btn ghost" data-ract="edit" style="margin-left:6px">수정</button><button class="btn ghost" data-ract="del">삭제</button></span></h3>${repDel === pre + kind + date + x.pm ? `<div class="confirm">${esc(x.pm)}님의 이 보고를 삭제할까요? 구글 시트에서도 지워지고 되돌릴 수 없어요.<div class="btn-row" style="margin-top:8px"><button class="btn danger" data-ract="del-ok">삭제</button><button class="btn" data-ract="del-no">취소</button></div></div>` : ''}<dl>${[x.a, x.b, x.c].map((v, i) => v ? `<dt>${L[i]}</dt><dd>${esc(v)}</dd>` : '').join('')}</dl></div>`).join('');
 }
 ['d', 'w'].forEach(pre => {
   const f = document.getElementById(pre + '-wform');
+  document.getElementById(pre + '-wlist').addEventListener('click', async e => {
+    const b = e.target.closest('[data-ract]'); if (!b) return; const pm = b.closest('.wcard').dataset.pm, { kind, date } = repKey(pre), act = b.dataset.ract;
+    if (act === 'edit') { const sel = document.getElementById(pre + '-wpm'); sel.value = pm; wDirty[pre] = false; renderWrite(pre); f.scrollIntoView({ behavior: 'smooth', block: 'center' }); f.a.focus(); return; }
+    if (act === 'del') { repDel = pre + kind + date + pm; renderWrite(pre); return; }
+    if (act === 'del-no') { repDel = null; renderWrite(pre); return; }
+    if (act === 'del-ok') { repDel = null; REPORTS = REPORTS.filter(r => !(r.kind === kind && r.date === date && r.pm === pm)); if (document.getElementById(pre + '-wpm').value === pm) wDirty[pre] = false; renderAll();
+      try { await api('POST', { action: 'saveReport', report: { kind, date, pm, a: '', b: '', c: '' } }); toast('보고를 삭제했어요'); } catch (x) { handleWriteError(x); load(true); } }
+  });
   f.addEventListener('input', () => { wDirty[pre] = true; });
   document.getElementById(pre + '-wpm').addEventListener('change', e => { wDirty[pre] = false; try { localStorage.setItem('udi-last-pm', e.target.value); } catch (x) {} renderWrite(pre); });
   f.addEventListener('submit', async e => {
