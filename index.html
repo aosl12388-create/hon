@@ -617,6 +617,55 @@ body { --logo-h: 16px; --logo-h-sm: 16px; }
 .stat-help { font-size: 12px; color: var(--muted); line-height: 1.5; margin: 2px 0 0; }
 .stat-card.is-hero .stat-help { color: rgba(255,255,255,.85); }
 @media (max-width: 1024px) { .guide { grid-template-columns: 1fr; } }
+.kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-4); }
+.kpi-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.kgroup { margin-bottom: var(--s-5); }
+.kgroup-h { display: flex; align-items: baseline; gap: 10px; margin: 0 0 10px; }
+.kgroup-h h3 { margin: 0; font-size: 15px; font-weight: 800; color: var(--ink); }
+.kgroup-h p { margin: 0; font-size: 12px; color: var(--muted); }
+.kcard { background: var(--white); border: 1px solid var(--line); border-radius: var(--r-lg); padding: var(--s-4) var(--s-5); display: grid; gap: 8px; }
+.kcard .kh { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--soft-ink); }
+.kcard .kn { font-size: 28px; font-weight: 700; color: var(--ink); line-height: 1.1; }
+.kcard .kn small { font-size: 14px; font-weight: 600; color: var(--muted); margin-left: 4px; }
+.kbar { position: relative; height: 10px; border-radius: 999px; background: var(--gray-1); overflow: hidden; }
+.kbar > i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: var(--accent); }
+.kbar > b { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--ink); opacity: .55; }
+.kcard .kf { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.kst { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.kst.good { background: #E3F4EA; color: #1B6B3A; } .kst.ok { background: var(--accent-10); color: var(--accent); }
+.kst.warn { background: #FFF1D6; color: #8A5A00; } .kst.bad { background: var(--red-10); color: #A1262B; } .kst.flat { background: var(--gray-1); color: var(--soft-ink); }
+.cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.cal .dow { font-size: 12px; font-weight: 700; color: var(--muted); text-align: center; padding: 2px 0 4px; }
+.cal .dow.we { color: #B0574F; }
+.cal button.day { all: unset; box-sizing: border-box; cursor: pointer; min-height: 92px; border-radius: var(--r-md); border: 1px solid var(--line); background: var(--white); padding: 8px; display: flex; flex-direction: column; gap: 4px; }
+.cal button.day:hover { border-color: var(--accent); }
+.cal button.day:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.cal .day.out { visibility: hidden; }
+.cal .day .dn { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 700; color: var(--ink); }
+.cal .day.we .dn { color: #B0574F; }
+.cal .day.today { border: 2px solid var(--accent); }
+.cal .day .cnt { font-size: 20px; font-weight: 700; color: var(--ink); line-height: 1; margin-top: auto; }
+.cal .day .cnt small { font-size: 11px; font-weight: 600; color: var(--soft-ink); margin-left: 2px; }
+.cal .day .sub { font-size: 11px; color: var(--soft-ink); line-height: 1.35; }
+.cal .day .rp { font-size: 10px; font-weight: 700; color: var(--accent); background: var(--white); border: 1px solid var(--accent-20); border-radius: 999px; padding: 0 6px; }
+.cal button.day.h1, .cal-legend .h1 { background: #E6F0F2; } .cal button.day.h2, .cal-legend .h2 { background: #C3DCE2; }
+.cal button.day.h3, .cal-legend .h3 { background: #8FBCC7; } .cal button.day.h4, .cal-legend .h4 { background: #5C98A8; }
+.ktable { min-width: 560px; }
+@media (max-width: 1024px) { .ktable thead { display: table-header-group !important; } .ktable tr { display: table-row !important; } .ktable td, .ktable th { display: table-cell !important; } .ktable td::before { display: none !important; content: none !important; } }
+.cal .day.h4 .cnt, .cal .day.h4 .dn, .cal .day.h4 .sub, .cal .day.h4 .cnt small { color: #fff; }
+.cal-legend { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--muted); }
+.cal-legend i { width: 14px; height: 14px; border-radius: 4px; display: inline-block; border: 1px solid var(--line); }
+.ktable td.kc { text-align: center; white-space: nowrap; font-size: 13px; }
+.ktable td.kc b { display: block; font-size: 14px; }
+.ktable td.kc span { font-size: 11px; color: var(--muted); }
+.ktable td.kc.g { background: #E3F4EA; } .ktable td.kc.w { background: #FFF6E3; } .ktable td.kc.b { background: var(--red-10); }
+.ktable th.cur, .ktable td.cur { box-shadow: inset 0 0 0 2px var(--accent); }
+.kgoal { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-4); align-items: end; }
+.kgoal label { display: grid; gap: 6px; font-size: 13px; font-weight: 700; color: var(--soft-ink); }
+.kgoal label span { font-weight: 400; color: var(--muted); font-size: 12px; }
+.kgoal .btn-row { grid-column: 1 / -1; }
+@media (max-width: 1024px) { .kpi-grid, .kpi-grid.two, .kgoal { grid-template-columns: repeat(2, minmax(0, 1fr)); } .cal button.day { min-height: 70px; padding: 5px; } .cal .day .sub { display: none; } }
+@media (max-width: 640px) { .cal .day .rpt { display: none; } .cal .day .rp { padding: 0 3px; } .kpi-grid, .kpi-grid.two, .kgoal { grid-template-columns: 1fr; } .cal { gap: 3px; } .cal .day .cnt { font-size: 15px; } }
 .wform { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-4); }
 .wform label { display: grid; gap: 6px; font-size: 13px; font-weight: 700; color: var(--soft-ink); }
 .wform textarea.ctl { min-height: 120px; height: auto; line-height: 1.6; }
@@ -734,6 +783,7 @@ select.off { background: var(--red-10); }
       <p class="db-menu-label">ACTIVITY</p>
       <a href="#daily" data-v="daily">데일리 보고</a>
       <a href="#weekly" data-v="weekly">위클리 보고</a>
+      <a href="#kpi" data-v="kpi">월간 KPI 달력</a>
       <a href="#import" data-v="import">슬랙 붙여넣기</a>
       <p class="db-menu-label">PIPELINE</p>
       <a href="#overview" data-v="overview">영업 계획 현황</a>
@@ -866,6 +916,42 @@ select.off { background: var(--red-10); }
     </section>
 
     <!-- IMPORT FROM SLACK -->
+    <section class="view" id="view-kpi">
+      <div class="guide"><div class="db-tint"><h3><b>1</b>BEFORE · 월초에 목표 합의</h3><p>맨 아래 'KPI 목표 설정'에서 팀 전체 또는 PM별 월 목표를 정해요. 목표를 안 정한 달은 가장 최근에 정한 목표를 이어서 써요.</p></div><div class="db-tint"><h3><b>2</b>DURING · 달력으로 진행 관리</h3><p>날짜 칸의 숫자는 그날 영업 활동 수, 색이 진할수록 많이 움직인 날이에요. 'ⓓ'는 데일리 보고를 쓴 날, 날짜를 누르면 그날 데일리 보고로 가요.</p></div><div class="db-tint"><h3><b>3</b>AFTER · 월말 숫자로 정리</h3><p>활동 지표(얼마나 움직였나)와 성과 지표(무엇이 달라졌나)를 나눠 달성률을 보여줘요. '월간 KPI 리포트'를 복사해 슬랙에 바로 공유해요.</p></div></div>
+      <div class="toolbar">
+        <label>월<input type="month" class="ctl" id="k-month"></label>
+        <div class="btn-row"><button class="btn" id="k-prev">‹ 지난달</button><button class="btn" id="k-this">이번 달</button><button class="btn" id="k-next">다음 달 ›</button></div>
+        <label>담당 PM<select class="ctl" id="k-pm"></select></label>
+      </div>
+      <div class="db-section" id="k-cards"></div>
+      <div class="db-section">
+        <article class="db-card">
+          <header class="card-head"><div><h2 class="card-title" id="k-cal-title">활동 달력</h2><p class="card-sub" id="k-cal-sub"></p></div>
+            <div class="cal-legend" aria-hidden="true"><span>적음</span><i class="h1"></i><i class="h2"></i><i class="h3"></i><i class="h4"></i><span>많음</span></div></header>
+          <div class="cal" id="k-cal"></div>
+        </article>
+      </div>
+      <div class="db-section">
+        <article class="db-card">
+          <header class="card-head"><div><h2 class="card-title" id="k-year-title">월별 KPI 달성률</h2><p class="card-sub">칸마다 실적 / 목표 · 달성률 · 목표가 없는 달은 실적만 보여요</p></div></header>
+          <div class="scroll"><table class="db-table ktable" id="k-year"></table></div>
+        </article>
+      </div>
+      <div class="db-section">
+        <article class="db-card">
+          <header class="card-head"><div><h2 class="card-title">월간 KPI 리포트</h2><p class="card-sub">이 달 달성률을 개조식으로 정리해요 · 복사해서 슬랙에 바로 붙여 넣으세요</p></div><button class="btn primary" data-copy="k-report">텍스트 복사</button></header>
+          <pre class="report" id="k-report"></pre>
+        </article>
+      </div>
+      <div class="db-section">
+        <article class="db-card">
+          <header class="card-head"><div><h2 class="card-title">KPI 목표 설정</h2><p class="card-sub" id="k-goal-sub"></p></div>
+            <label class="inline-pm">대상<select class="ctl" id="k-gpm"></select></label></header>
+          <form class="kgoal" id="k-goal" autocomplete="off"></form>
+        </article>
+      </div>
+    </section>
+
     <section class="view" id="view-import">
       <div class="guide">
         <div class="db-tint"><h3><b>1</b>슬랙 글을 그대로 붙여 넣기</h3><p>슬랙에 올린 데일리·위클리 보고나 메모를 복사해서 아래 칸에 붙여 넣어요. 여러 사람 글을 한꺼번에 넣어도 돼요.</p></div>
@@ -1044,7 +1130,7 @@ setInterval(() => { if (document.visibilityState === 'visible' && KEY && Date.no
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && KEY && Date.now() - lastLoad > 20000) load(true); });
 
 // ---------- routing ----------
-const VIEWS = { daily: ['DAILY REPORT', '데일리 영업 보고'], weekly: ['WEEKLY REPORT', '위클리 영업 보고'], import: ['SLACK IMPORT', '슬랙 내용 가져오기'], overview: ['PIPELINE OVERVIEW', '27\' 영업 계획 현황'], plan: ['PIPELINE DATA', 'Cell 영업 계획'], lists: ['SETTINGS', '목록 관리'] };
+const VIEWS = { daily: ['DAILY REPORT', '데일리 영업 보고'], weekly: ['WEEKLY REPORT', '위클리 영업 보고'], kpi: ['MONTHLY KPI', '월간 KPI 달력'], import: ['SLACK IMPORT', '슬랙 내용 가져오기'], overview: ['PIPELINE OVERVIEW', '27\' 영업 계획 현황'], plan: ['PIPELINE DATA', 'Cell 영업 계획'], lists: ['SETTINGS', '목록 관리'] };
 function view() { const v = location.hash.slice(1); return VIEWS[v] ? v : 'daily'; }
 function route() {
   const v = view();
@@ -1058,6 +1144,7 @@ function renderHeader() {
   const v = view(), chip = document.getElementById('chip'), meta = document.getElementById('meta');
   if (v === 'daily') { meta.textContent = md(dState.date) + ' · ' + (dState.pm || '전체 PM'); chip.textContent = '기록 ' + ACTS.filter(a => a.date === dState.date).length + '건'; }
   else if (v === 'weekly') { const m = monday(wState.date); meta.textContent = `${md(m)} ~ ${md(addDays(m, 6))} · ` + (wState.pm || '전체 PM'); chip.textContent = '주간 집계'; }
+  else if (v === 'kpi') { meta.textContent = kState.month.replace('-', '년 ') + '월 · ' + (kState.pm || '팀 전체'); chip.textContent = '월간 KPI'; }
   else if (v === 'import') { meta.textContent = '슬랙에 올린 보고를 붙여 넣으면 활동 기록·보고로 나눠 저장해요'; chip.textContent = '자동 분류'; }
   else { meta.textContent = '예정액 = 사업총액 × 진행율 × 수주 확률'; chip.textContent = '27\' 매출 계획'; }
 }
@@ -1487,6 +1574,124 @@ document.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click'
   catch (e) { const r = document.createRange(); r.selectNodeContents(document.getElementById(b.dataset.copy)); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast('텍스트를 선택해 두었어요. Ctrl+C로 복사하세요'); }
 }));
 
+// ---------- MONTHLY KPI ----------
+const KPIS = [
+  { k: 'acts', g: 'act', name: '영업 활동', unit: '건', help: '기록된 모든 활동 수', f: xs => xs.length },
+  { k: 'meet', g: 'act', name: '미팅', unit: '건', help: "활동 유형이 '미팅'인 기록", f: xs => xs.filter(a => isType(a, '미팅')).length },
+  { k: 'orgs', g: 'act', name: '접촉 기관', unit: '곳', help: '같은 기관은 한 달에 한 번만 셈', f: xs => new Set(xs.map(a => (a.org || '').trim()).filter(Boolean)).size },
+  { k: 'rep', g: 'act', name: '데일리 보고 작성', unit: '일', help: '데일리 보고를 쓴 날 수', f: (xs, m, pm) => new Set(REPORTS.filter(r => r.kind === 'daily' && (r.date || '').slice(0, 7) === m && (!pm || r.pm === pm)).map(r => r.date)).size },
+  { k: 'prop', g: 'out', name: '제안·견적', unit: '건', help: '제안서·견적을 보낸 기록', f: xs => xs.filter(a => isType(a, '제안')).length },
+  { k: 'won', g: 'out', name: '수주', unit: '건', help: "단계가 '수주'인 기관 수", f: xs => new Set(xs.filter(a => a.stage === '수주').map(a => (a.org || '').trim() || a.id)).size }
+];
+const KGROUPS = [['act', '활동 지표', '얼마나 움직였나'], ['out', '성과 지표', '무엇이 달라졌나']];
+const TEAM = '팀 전체';
+const kState = { month: today().slice(0, 7), pm: '', gpm: '' };
+const ym = (y, m) => `${y}-${pad(m)}`;
+const addMonth = (s, n) => { const [y, m] = s.split('-').map(Number); const d = new Date(y, m - 1 + n, 1); return ym(d.getFullYear(), d.getMonth() + 1); };
+const daysIn = s => { const [y, m] = s.split('-').map(Number); return new Date(y, m, 0).getDate(); };
+const monthActs = (m, pm) => ACTS.filter(a => (a.date || '').slice(0, 7) === m && (!pm || a.pm === pm));
+const kpiVals = (m, pm) => { const xs = monthActs(m, pm); const o = {}; KPIS.forEach(K => o[K.k] = K.f(xs, m, pm)); return o; };
+function goalRow(m, who) { const r = REPORTS.find(x => x.kind === 'kpi' && x.date === m && x.pm === who); if (!r) return null; try { return JSON.parse(r.a || '{}'); } catch (e) { return null; } }
+function kpiGoal(m, pm) { // own month first, then most recent earlier month
+  const who = pm || TEAM, own = goalRow(m, who); if (own) return { g: own, from: m };
+  const prev = REPORTS.filter(x => x.kind === 'kpi' && x.pm === who && x.date < m).map(x => x.date).sort().pop();
+  return prev ? { g: goalRow(prev, who) || {}, from: prev } : { g: {}, from: '' };
+}
+function weekdays(m, upto) { let n = 0; const last = upto ? Math.min(daysIn(m), upto) : daysIn(m); for (let d = 1; d <= last; d++) { const w = parse(`${m}-${pad(d)}`).getDay(); if (w && w < 6) n++; } return n; }
+function kStatus(m, v, g) {
+  if (!g) return ['flat', '목표 없음'];
+  const t = today(), cm = t.slice(0, 7);
+  if (v >= g) return ['good', '달성'];
+  if (m > cm) return ['flat', '예정'];
+  if (m < cm) return ['bad', '미달'];
+  const pace = g * weekdays(m, +t.slice(8, 10)) / Math.max(1, weekdays(m));
+  return v >= pace ? ['ok', '순항'] : v >= pace * 0.7 ? ['warn', '주의'] : ['bad', '부진'];
+}
+const mlabel = m => `${+m.slice(5)}월`;
+function renderKpi() {
+  const M = kState.month, pm = kState.pm, t = today(), cm = t.slice(0, 7);
+  document.getElementById('k-month').value = M;
+  document.getElementById('k-pm').innerHTML = opts(LISTS.pm, pm, TEAM);
+  const vals = kpiVals(M, pm), { g, from } = kpiGoal(M, pm);
+  const paceR = M === cm ? weekdays(M, +t.slice(8, 10)) / Math.max(1, weekdays(M)) : M < cm ? 1 : 0;
+  const card = K => {
+    const v = vals[K.k], goal = +g[K.k] || 0, [cls, lab] = kStatus(M, v, goal), r = goal ? v / goal : 0;
+    const foot = goal ? `목표 ${goal}${K.unit} · ${goal > v ? `${goal - v}${K.unit} 남음` : '목표 달성'}` + (M === cm && goal > v ? ` · 지금쯤 ${Math.round(goal * paceR)}${K.unit}` : '') : '목표를 정하면 달성률이 보여요';
+    return `<article class="kcard"><div class="kh"><span>${esc(K.name)}</span><span class="kst ${cls}">${lab}</span></div>
+      <div class="kn en">${v}<small>${K.unit}${goal ? ` / ${goal}${K.unit} · ${Math.round(r * 100)}%` : ''}</small></div>
+      <div class="kbar" role="img" aria-label="${esc(K.name)} 달성률 ${goal ? Math.round(r * 100) + '%' : '목표 없음'}"><i style="width:${Math.min(100, r * 100).toFixed(1)}%"></i>${goal && M === cm ? `<b style="left:calc(${(paceR * 100).toFixed(1)}% - 1px)" title="지금쯤 목표"></b>` : ''}</div>
+      <div class="kf">${esc(foot)}<br>${esc(K.help)}</div></article>`; };
+  document.getElementById('k-cards').innerHTML = KGROUPS.map(([gk, gn, gs]) => { const ks = KPIS.filter(K => K.g === gk);
+    return `<div class="kgroup"><div class="kgroup-h"><h3>${gn}</h3><p>${gs}</p></div><div class="kpi-grid${ks.length === 2 ? ' two' : ''}">${ks.map(card).join('')}</div></div>`; }).join('');
+  // calendar
+  const [y, mm] = M.split('-').map(Number), first = (new Date(y, mm - 1, 1).getDay() + 6) % 7, n = daysIn(M), xs = monthActs(M, pm);
+  const per = {}; xs.forEach(a => (per[a.date] = per[a.date] || []).push(a));
+  const repDays = new Set(REPORTS.filter(r => r.kind === 'daily' && (r.date || '').slice(0, 7) === M && (!pm || r.pm === pm)).map(r => r.date));
+  const mx = Math.max(1, ...Object.values(per).map(a => a.length));
+  let h = ['월', '화', '수', '목', '금', '토', '일'].map((d, i) => `<div class="dow${i > 4 ? ' we' : ''}">${d}</div>`).join('');
+  for (let i = 0; i < first; i++) h += '<button class="day out" tabindex="-1" aria-hidden="true"></button>';
+  for (let d = 1; d <= n; d++) {
+    const ds = `${M}-${pad(d)}`, a = per[ds] || [], c = a.length, w = parse(ds).getDay(), lv = c ? Math.min(4, Math.ceil(c / mx * 4)) : 0;
+    const mt = a.filter(x => isType(x, '미팅')).length, pr = a.filter(x => isType(x, '제안')).length, wonN = a.filter(x => x.stage === '수주').length;
+    const sub = [mt && `미팅 ${mt}`, pr && `제안 ${pr}`, wonN && `수주 ${wonN}`].filter(Boolean).join(' · ');
+    h += `<button class="day${lv ? ' h' + lv : ''}${w === 0 || w === 6 ? ' we' : ''}${ds === t ? ' today' : ''}" data-d="${ds}" aria-label="${mlabel(M)} ${d}일 활동 ${c}건${repDays.has(ds) ? ', 데일리 보고 있음' : ''}">
+      <span class="dn"><span class="en">${d}</span>${repDays.has(ds) ? '<span class="rp" title="데일리 보고 작성">ⓓ<span class="rpt"> 보고</span></span>' : ''}</span>
+      ${sub ? `<span class="sub">${sub}</span>` : ''}${c ? `<span class="cnt en">${c}<small>건</small></span>` : ''}</button>`;
+  }
+  const cal = document.getElementById('k-cal'); cal.innerHTML = h;
+  document.getElementById('k-cal-title').textContent = `${y}년 ${mm}월 활동 달력`;
+  const activeDays = Object.keys(per).length;
+  document.getElementById('k-cal-sub').textContent = `활동 ${xs.length}건 · 활동한 날 ${activeDays}일 · 보고 쓴 날 ${repDays.size}일 · 날짜를 누르면 그날 데일리 보고로 가요`;
+  // yearly table
+  const allMonths = Array.from({ length: 12 }, (_, i) => ym(y, i + 1));
+  const hasData = m => m === M || m === cm || monthActs(m, pm).length || REPORTS.some(r => (r.kind === 'kpi' ? r.date === m && r.pm === (pm || TEAM) : (r.date || '').slice(0, 7) === m));
+  const firstM = allMonths.find(hasData) || M, months = allMonths.filter(m => m >= firstM);
+  let tb = `<thead><tr><th>KPI</th>${months.map(m => `<th class="c${m === M ? ' cur' : ''}">${mlabel(m)}</th>`).join('')}</tr></thead><tbody>`;
+  const allV = months.map(m => kpiVals(m, pm)), allG = months.map(m => kpiGoal(m, pm).g);
+  KPIS.forEach((K, ki) => { if (!ki || KPIS[ki - 1].g !== K.g) { const G = KGROUPS.find(x => x[0] === K.g); tb += `<tr class="sec-row"><td colspan="${months.length + 1}">${G[1]} · ${G[2]}</td></tr>`; } tb += `<tr><td>${esc(K.name)}</td>` + months.map((m, i) => { const v = allV[i][K.k], goal = +allG[i][K.k] || 0, future = m > cm;
+      if (future && !v) return `<td class="kc${m === M ? ' cur' : ''}"><span>${goal ? '목표 ' + goal : '-'}</span></td>`;
+      const r = goal ? v / goal : null, cls = r == null ? '' : r >= 1 ? 'g' : m === cm ? (kStatus(m, v, goal)[0] === 'ok' ? '' : 'w') : 'b';
+      return `<td class="kc ${cls}${m === M ? ' cur' : ''}" data-label="${mlabel(m)}"><b class="en">${v}${goal ? `<span> / ${goal}</span>` : ''}</b>${r != null ? `<span class="en">${Math.round(r * 100)}%</span>` : ''}</td>`; }).join('') + '</tr>'; });
+  document.getElementById('k-year').innerHTML = tb + '</tbody>';
+  document.getElementById('k-year-title').textContent = `${y}년 월별 KPI 달성률 · ${pm || TEAM}`;
+  document.getElementById('k-report').textContent = kpiText(M, pm, vals, g, xs);
+  // goal form
+  const gpm = kState.gpm, gsel = document.getElementById('k-gpm');
+  gsel.innerHTML = `<option value="">${TEAM}</option>` + LISTS.pm.map(p => `<option value="${esc(p)}"${p === gpm ? ' selected' : ''}>${esc(p)}</option>`).join('');
+  const G = kpiGoal(M, gpm), own = G.from === M;
+  document.getElementById('k-goal-sub').textContent = `${y}년 ${mm}월 · ${gpm || TEAM} 목표 · ` + (own ? '이 달에 직접 정한 목표예요' : G.from ? `${+G.from.slice(5)}월에 정한 목표를 이어서 쓰는 중이에요. 저장하면 이 달 목표로 따로 남아요` : '아직 정한 목표가 없어요');
+  document.getElementById('k-goal').innerHTML = KPIS.map(K => `<label>${esc(K.name)} <span>(${K.unit} / 월)</span><input class="ctl en" type="number" min="0" step="1" inputmode="numeric" name="${K.k}" value="${G.g[K.k] ?? ''}" placeholder="예: ${({ acts: 40, meet: 12, prop: 4, orgs: 20, won: 1, rep: 20 })[K.k]}"${CAN_WRITE ? '' : ' disabled'}></label>`).join('') +
+    `<div class="btn-row"><button class="btn primary" type="submit"${CAN_WRITE ? '' : ' disabled'}>${mm}월 목표 저장</button>${own ? `<button class="btn ghost" type="button" id="k-goal-del">${mm}월 목표 지우기</button>` : ''}<span class="card-sub" style="align-self:center">비워 둔 칸은 목표 없이 실적만 보여요</span></div>`;
+}
+function kpiText(M, pm, vals, g, xs) {
+  const [y, mm] = M.split('-').map(Number), cm = today().slice(0, 7);
+  let s = `[월간 KPI 리포트] ${y}년 ${mm}월 · ${pm || TEAM}${M === cm ? ` (${md(today())} 기준)` : ''}\n`;
+  KGROUPS.forEach(([gk, gn, gs]) => { s += `\n■ ${gn} (${gs})\n`;
+    KPIS.filter(K => K.g === gk).forEach(K => { const v = vals[K.k], goal = +g[K.k] || 0, st = kStatus(M, v, goal)[1];
+      s += `- ${K.name}: ${v}${K.unit}` + (goal ? ` / 목표 ${goal}${K.unit} (${Math.round(v / goal * 100)}%) · ${st}` : ' · 목표 미설정') + '\n'; }); });
+  const won = [...new Set(xs.filter(a => a.stage === '수주').map(a => a.org).filter(Boolean))];
+  s += '\n■ 이달 수주\n' + (won.length ? won.map(o => `- ${o}`).join('\n') : '- 없음') + '\n';
+  const short = KPIS.filter(K => +g[K.k] && vals[K.k] < +g[K.k]).map(K => `${K.name} ${+g[K.k] - vals[K.k]}${K.unit}`);
+  s += '\n■ 목표까지 남은 양\n' + (short.length ? short.map(x => `- ${x}`).join('\n') : Object.keys(g).length ? '- 모든 목표 달성' : '- 목표 미설정') + '\n';
+  const nm = addMonth(M, 1), ng = kpiGoal(nm, pm);
+  s += `\n■ 다음 달(${+nm.slice(5)}월) 목표\n` + (Object.keys(ng.g).length ? KPIS.filter(K => ng.g[K.k] != null).map(K => `- ${K.name} ${ng.g[K.k]}${K.unit}`).join('\n') + (ng.from === nm ? '' : ' (이번 목표 유지)') : '- 미정');
+  return s.trim();
+}
+async function saveKpiGoal(g) {
+  const body = { kind: 'kpi', date: kState.month, pm: kState.gpm || TEAM, a: Object.keys(g).length ? JSON.stringify(g) : '', b: '', c: '', updatedAt: new Date().toISOString() };
+  REPORTS = REPORTS.filter(r => !(r.kind === 'kpi' && r.date === body.date && r.pm === body.pm)); if (body.a) REPORTS.push(body); renderKpi();
+  try { await api('POST', { action: 'saveReport', report: body }); toast(body.a ? '목표를 저장했어요' : '목표를 지웠어요'); } catch (e) { handleWriteError(e); load(true); }
+}
+document.getElementById('k-goal').addEventListener('submit', e => { e.preventDefault(); const g = {}; KPIS.forEach(K => { const v = e.target[K.k].value.trim(); if (v !== '' && +v >= 0) g[K.k] = Math.round(+v); }); saveKpiGoal(g); });
+document.getElementById('k-goal').addEventListener('click', e => { if (e.target.id === 'k-goal-del') saveKpiGoal({}); });
+document.getElementById('k-gpm').onchange = e => { kState.gpm = e.target.value; renderKpi(); };
+document.getElementById('k-cal').addEventListener('click', e => { const b = e.target.closest('button.day[data-d]'); if (!b) return; dState.date = b.dataset.d; if (kState.pm) dState.pm = kState.pm; const f = document.getElementById('act-form'); if (f && f.date) f.date.value = dState.date; renderDaily(); location.hash = 'daily'; });
+document.getElementById('k-month').addEventListener('change', e => { if (e.target.value) { kState.month = e.target.value; renderKpi(); renderHeader(); } });
+document.getElementById('k-prev').onclick = () => { kState.month = addMonth(kState.month, -1); renderKpi(); renderHeader(); };
+document.getElementById('k-next').onclick = () => { kState.month = addMonth(kState.month, 1); renderKpi(); renderHeader(); };
+document.getElementById('k-this').onclick = () => { kState.month = today().slice(0, 7); renderKpi(); renderHeader(); };
+document.getElementById('k-pm').onchange = e => { kState.pm = e.target.value; kState.gpm = e.target.value; renderKpi(); renderHeader(); };
+
 // ---------- OVERVIEW ----------
 const cost = p => Math.round((p.total || 0) * (p.rate || 0));
 const sales = p => (p.total || 0) * (p.progress || 0) * (p.prob || 0);
@@ -1609,7 +1814,7 @@ async function commitEdit(key, i) { const v = listsBox.querySelector('.li-edit')
 function doDelete(key, i) { const v = LISTS[key][i]; LISTS[key].splice(i, 1); pending = null; saveLists(); renderAll(); toast(`'${v}' 삭제했어요`); }
 
 // ---------- boot ----------
-function renderAll() { renderDaily(); renderWeekly(); renderImport(); renderOverview(); renderPlan(); renderLists(); renderHeader(); }
+function renderAll() { renderDaily(); renderWeekly(); renderKpi(); renderImport(); renderOverview(); renderPlan(); renderLists(); renderHeader(); }
 setSync(); route(); renderAll(); load();
 </script>
 </body>
