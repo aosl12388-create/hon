@@ -59,6 +59,8 @@ function show(i){['loading','ask','done','bad','tst','tdone'].forEach(function(x
 function val(i){return $(i).value.trim();}
 function done(){show('done');}
 var nm=q.get('n')||'';
+// 메일 버튼으로 들어온 것 기록(새로고침 중복 제외)
+try{ if(c&&t&&!sessionStorage.getItem('viewed_'+c)){ sessionStorage.setItem('viewed_'+c,'1'); fetch(API,{method:'POST',mode:'no-cors',credentials:'omit',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({mode:'view',c:c,t:t,test:isTest})}); } }catch(e){}
 if(location.hash==='#test'){show('tst');}
 else if(!c||!t){var free=true;$('co').textContent='귀사';$('cowrap').classList.remove('hide');show('ask');}else if(nm){$('co').textContent=nm;show('ask');}else{
   var shown=false;
